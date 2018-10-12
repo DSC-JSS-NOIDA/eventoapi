@@ -12,11 +12,11 @@ User = get_user_model()
 
 class Society(models.Model):
 	name              = models.CharField(max_length=100,null=False)
-	created_at 		  = models.DateTimeField(default=timezone.now())
+	created_at        = models.DateTimeField(default=timezone.now())
 	logo              = models.ImageField(upload_to='',blank=True)
 	department_name   = models.CharField(max_length=120,null=False)
 	contact_no        = models.IntegerField(max_length=10,null=False)
-	email		      = models.TextField(max_length=100,null=False)
+	email		  = models.TextField(max_length=100,null=False)
 
 	def publish(self):
 		self.published_date = timezone.now()
@@ -34,13 +34,13 @@ class Tag(models.Model):
 		return self.name
 
 class Event(models.Model):
-	name      	   = models.TextField(max_length=150,null=False)
-	start_day  	   = models.DateTimeField(u'Start day of the event', help_text=u'Start day of the event')
-	end_day    	   = models.DateTimeField(u'End day of the event', help_text=u'End day of the event')
-	start_time	   = models.TimeField(u'Starting time', help_text=u'Starting time')
-	end_time  	   = models.TimeField(u'Ending time', help_text=u'Ending time')
+	name           = models.TextField(max_length=150,null=False)
+	start_day      = models.DateTimeField(u'Start day of the event', help_text=u'Start day of the event')
+	end_day        = models.DateTimeField(u'End day of the event', help_text=u'End day of the event')
+	start_time     = models.TimeField(u'Starting time', help_text=u'Starting time')
+	end_time       = models.TimeField(u'Ending time', help_text=u'Ending time')
 	notes          = models.TextField(u'Textual field', help_text=u'Textual field', blank=True,null=True)
-	image     	   = models.ImageField(upload_to='', blank=True)
+	image          = models.ImageField(upload_to='', blank=True)
 	contact_person = models.IntegerField(max_length=10,null=False)
 	contact_person = models.IntegerField(max_length=10,null=False)
 	society        = models.ForeignKey(Society, related_name='event', on_delelte=models.CASCADE)
@@ -53,9 +53,9 @@ class User(models.Model):
 	name       = models.CharField(max_length=100,blank=False,null=False)
 	otp        = models.IntegerField(max_length=15,null=True)
 	otp_expiry = models.DateTimeField(default=timezone.now())
-    role	   = models.CharField(max_length=20, null=False)
-    contact_no = models.IntegerField(max_length=10,null=True)
-    status     = models.IntegerField(max_length=10)
+        role	   = models.CharField(max_length=20, null=False)
+        contact_no = models.IntegerField(max_length=10,null=True)
+        status     = models.IntegerField(max_length=10)
 
 
 
