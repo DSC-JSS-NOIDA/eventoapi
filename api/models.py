@@ -1,26 +1,26 @@
 from django.db import models
 from django.contrib.auth.models import PermissionsMixin,  AbstractBaseUser, BaseUserManager
 from django.utils import timezone
-
-# from django.core.exceptions import ValidationError
-# from django.core.urlresolvers import reverse
+from django.core.validators import RegexValidator
 
 
 class AccountManager(BaseUserManager):
-    def create_user(self, email, name, password):
-        user = self.model(email=email, name=name, password=password)
+    def create_user(self, email, name, password, phone):
+        user = self.model(email=self.normalize_email(email),
+                          name=name, password=password, phone=phone)
         user.set_password(password)
         user.is_staff = False
         user.is_superuser = False
-        user.save()
+        user.save(using=self._db)
         return user
 
     def create_superuser(self, email, name, password):
-        user = self.create_user(email=email, name=name, password=password)
+        user = self.create_user(email=self.normalize_email(
+            email), name=name, password=password)
         user.is_active = True
         user.is_staff = True
         user.is_superuser = True
-        user.save()
+        user.save(using=self._db)
         return user
 
     def get_by_natural_key(self, email_):
@@ -34,7 +34,10 @@ class User(AbstractBaseUser, PermissionsMixin):
     otp_expiry = models.DateTimeField(default=timezone.now, null=True)
     verified = models.BooleanField(default=False, null=False)
     role = models.CharField(max_length=20, null=True)
-    phone = models.IntegerField(unique=True, null=True)
+    phone_regex = RegexValidator(
+        regex=r'^\d{10}$', message="Phone number must be of 10 digits.")
+    phone = models.IntegerField(
+        validators=[phone_regex], unique=True, null=True)
     status = models.IntegerField(null=True)
     email = models.EmailField(unique=True, null=False)
     is_staff = models.BooleanField(default=False)

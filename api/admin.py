@@ -1,6 +1,6 @@
 from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin
-from .models import User
+from .models import User, Society, Tag, Event
 
 
 class CustomUserAdmin(UserAdmin):
@@ -12,12 +12,14 @@ class CustomUserAdmin(UserAdmin):
 
     fieldsets = (
         (None, {'fields': ('email', 'name', 'password')}),
-        (('Personal info'), {'fields': ('role', 'phone', 'otp', 'otp_expiry', 'verified', 'status')}),
+        (('Personal info'), {'fields': ('role', 'phone',
+                                        'otp', 'otp_expiry', 'verified', 'status')}),
         (('Permissions'), {'fields': ('is_staff', 'is_superuser',
-                                       'groups', 'user_permissions')}),
+                                      'groups', 'user_permissions')}),
     )
 
 
-
-
 admin.site.register(User, CustomUserAdmin)
+admin.site.register(Society)
+admin.site.register(Tag)
+admin.site.register(Event)

@@ -1,8 +1,10 @@
 
 from django.contrib.auth import authenticate
-from django.views.decorators.csrf import csrf_exempt
+from django.contrib.auth import get_user_model
+
+from rest_framework import permissions
 from rest_framework.authtoken.models import Token
-from rest_framework.decorators import api_view, permission_classes
+
 from rest_framework.permissions import AllowAny
 from rest_framework.status import (
     HTTP_400_BAD_REQUEST,
@@ -10,47 +12,67 @@ from rest_framework.status import (
     HTTP_200_OK
 )
 from rest_framework.response import Response
-from datetime import datetime
+from rest_framework.generics import CreateAPIView, UpdateAPIView, GenericAPIView
+from rest_framework.mixins import UpdateModelMixin
+from rest_framework.views import APIView
 
+from .serializers import UserSerializer
 
-from django.contrib.auth import get_user_model
 User = get_user_model()
 
 
-@csrf_exempt
-@api_view(["POST"])
-@permission_classes((AllowAny,))
-def login(request):
-    email = request.data.get("email")
-    password = request.data.get("password")
-    if email is None or password is None:
-        return Response({'error': 'Please provide both email and password'},
-                        status=HTTP_400_BAD_REQUEST)
-    user = authenticate(email=email, password=password)
-    if not user:
-        return Response({'error': 'Invalid Credentials'},
-                        status=HTTP_404_NOT_FOUND)
-    token = Token.objects.create(user=user)
-    return Response({'token': token.key},
-                    status=HTTP_200_OK)
+class LoginView(APIView):
+    permission_classes = [
+        permissions.AllowAny
+    ]
+
+    def post(self, request):
+        email = request.data.get("email")
+        password = request.data.get("password")
+        if email is None or password is None:
+            return Response({'error': 'Please provide both email and password'},
+                            status=HTTP_400_BAD_REQUEST)
+        user = authenticate(email=email, password=password)
+        if not user:
+            return Response({'error': 'Invalid Credentials'},
+                            status=HTTP_404_NOT_FOUND)
+
+        token, _ = Token.objects.get_or_create(user=user)
+
+        if not user.verified:
+            return Response({'token': token.key, 'verified': False},
+                            status=HTTP_200_OK)
+
+        return Response({'token': token.key},
+                        status=HTTP_200_OK)
 
 
-@csrf_exempt
-@api_view(["POST"])
-@permission_classes((AllowAny,))
-def register(request):
-    email = request.data.get("email")
-    name = request.data.get("name")
-    password = request.data.get("password")
-    if email is None or password is None or name is None:
-        return Response({'error': 'Please provide credentials'},
-                        status=HTTP_400_BAD_REQUEST)
-    user = User.objects.create_user(
-        email=email,
-        name=name,
-        password=password
-    )
-    user.save()
+class CreateUserView(CreateAPIView):
+    model = User
+    permission_classes = [
+        permissions.AllowAny
+    ]
+    serializer_class = UserSerializer
 
-    return Response({'name': name},
-                    status=HTTP_200_OK)
+
+class VerificationView(APIView):
+    permission_classes = [
+        permissions.AllowAny
+    ]
+
+    def post(self, request):
+        try:
+            instance = User.objects.get(email=request.data.get("email"))
+        except:
+            return Response({'error': 'Invalid credentials'},
+                            status=HTTP_400_BAD_REQUEST)
+        otp = request.data.get("otp")
+        if otp == "111111":
+            instance.verified = True
+            instance.otp = otp
+            instance.save()
+
+            return Response(status=HTTP_200_OK)
+        else:
+            return Response({'error': 'Wrong OTP'},
+                            status=HTTP_400_BAD_REQUEST)
