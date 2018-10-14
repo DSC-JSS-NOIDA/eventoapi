@@ -1,6 +1,23 @@
-# -*- coding: utf-8 -*-
-from __future__ import unicode_literals
-
 from django.contrib import admin
+from django.contrib.auth.admin import UserAdmin
+from .models import User
 
-# Register your models here.
+
+class CustomUserAdmin(UserAdmin):
+    model = User
+
+    list_display = ('name', 'email', 'verified')
+    list_filter = ('verified',)
+    ordering = ('email',)
+
+    fieldsets = (
+        (None, {'fields': ('email', 'name', 'password')}),
+        (('Personal info'), {'fields': ('role', 'phone', 'otp', 'otp_expiry', 'verified', 'status')}),
+        (('Permissions'), {'fields': ('is_staff', 'is_superuser',
+                                       'groups', 'user_permissions')}),
+    )
+
+
+
+
+admin.site.register(User, CustomUserAdmin)
