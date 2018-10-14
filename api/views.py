@@ -27,12 +27,15 @@ class LoginView(APIView):
     ]
 
     def post(self, request):
-        email = request.data.get("email")
+        username = request.data.get("email")
+        if username is None:
+            username = request.data.get("phone")
+
         password = request.data.get("password")
-        if email is None or password is None:
-            return Response({'error': 'Please provide both email and password'},
+        if username is None or password is None:
+            return Response({'error': 'Please provide both email/phone and password'},
                             status=HTTP_400_BAD_REQUEST)
-        user = authenticate(email=email, password=password)
+        user = authenticate(username=username, password=password)
         if not user:
             return Response({'error': 'Invalid Credentials'},
                             status=HTTP_404_NOT_FOUND)
@@ -71,7 +74,6 @@ class VerificationView(APIView):
             instance.verified = True
             instance.otp = otp
             instance.save()
-
             return Response(status=HTTP_200_OK)
         else:
             return Response({'error': 'Wrong OTP'},

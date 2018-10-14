@@ -129,3 +129,5 @@ USE_TZ = True
 STATIC_URL = '/static/'
 
 AUTH_USER_MODEL  = 'api.User'
+
+AUTHENTICATION_BACKENDS = ['django.contrib.auth.backends.ModelBackend', 'api.backend.PhoneAuthenticationBackend']
