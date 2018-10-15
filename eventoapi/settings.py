@@ -25,7 +25,7 @@ SECRET_KEY = '5@7$_+4j7l_9acobsj_=qn7!setz9nz=6fp*debu&2(rc()kpw'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ["13.233.72.42"]
 
 
 # Application definition
@@ -127,6 +127,8 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/2.1/howto/static-files/
 
 STATIC_URL = '/static/'
+
+STATIC_ROOT = os.path.join(BASE_DIR, "static/")
 
 AUTH_USER_MODEL  = 'api.User'
 
