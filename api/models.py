@@ -82,15 +82,14 @@ class Tag(models.Model):
 class Event(models.Model):
     name = models.TextField(max_length=150, null=False)
     start_day = models.DateTimeField(
-        u'Start day of the event', help_text=u'Start day of the event')
+        u'Start day of the event', help_text='Start day of the event')
     end_day = models.DateTimeField(
-        u'End day of the event', help_text=u'End day of the event')
-    start_time = models.TimeField(u'Starting time', help_text=u'Starting time')
-    end_time = models.TimeField(u'Ending time', help_text=u'Ending time')
+        u'End day of the event', help_text='End day of the event')
+    start_time = models.TimeField('Starting time', help_text='Starting time')
+    end_time = models.TimeField('Ending time', help_text='Ending time')
     notes = models.TextField(
-        u'Textual field', help_text=u'Textual field', blank=True, null=True)
+        u'Textual field', help_text='Textual field', blank=True, null=True)
     image = models.ImageField(upload_to='', blank=True)
-    contact_person = models.IntegerField(null=False)
     contact_person = models.IntegerField(null=False)
     society = models.ForeignKey(
         Society, related_name='event', on_delete=models.CASCADE)

@@ -14,6 +14,8 @@ class PhoneAuthenticationBackend:
              return None
         except User.DoesNotExist:
             return None
+        except ValueError: # for cases when email is given as username
+            return None
 
     def get_user(self, user_id):
         try:

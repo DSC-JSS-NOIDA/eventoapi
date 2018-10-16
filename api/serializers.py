@@ -2,7 +2,7 @@ from django.contrib.auth import get_user_model
 from django.core import exceptions
 from django.contrib.auth import password_validation
 from rest_framework import serializers
-
+from .models import Society, Event, Tag
 User = get_user_model()
 
 
@@ -25,7 +25,7 @@ class UserSerializer(serializers.ModelSerializer):
         except exceptions.ValidationError as exc:
             raise serializers.ValidationError(exc.messages)
         return value
-        
+
     def create(self, validated_data):
         user = User.objects.create(
             name=validated_data['name'],
@@ -36,3 +36,23 @@ class UserSerializer(serializers.ModelSerializer):
         user.save()
 
         return user
+
+
+class SocietySerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Society
+        fields = ('name', 'created_at', 'logo', 'department_name',
+                  'phone', 'email')
+
+
+class TagSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Tag
+        fields = ('name',)
+
+
+class EventSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Event
+        fields = ('name', 'start_day', 'end_day', 'start_time',
+                  'end_time', 'notes', 'image', 'contact_person','society', 'creater')

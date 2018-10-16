@@ -12,11 +12,11 @@ from rest_framework.status import (
     HTTP_200_OK
 )
 from rest_framework.response import Response
-from rest_framework.generics import CreateAPIView, UpdateAPIView, GenericAPIView
-from rest_framework.mixins import UpdateModelMixin
+from rest_framework.generics import CreateAPIView
 from rest_framework.views import APIView
 
-from .serializers import UserSerializer
+from .models import Society
+from .serializers import UserSerializer, SocietySerializer, EventSerializer, TagSerializer
 
 User = get_user_model()
 
@@ -78,3 +78,24 @@ class VerificationView(APIView):
         else:
             return Response({'error': 'Wrong OTP'},
                             status=HTTP_400_BAD_REQUEST)
+
+
+class CreateSocietyView(CreateAPIView):
+    permission_classes = [
+        permissions.IsAuthenticated
+    ]
+    serializer_class = SocietySerializer
+
+
+class CreateTagView(CreateAPIView):
+    permission_classes = [
+        permissions.IsAuthenticated
+    ]
+    serializer_class = TagSerializer
+
+
+class CreateEventView(CreateAPIView):
+    permission_classes = [
+        permissions.IsAuthenticated
+    ]
+    serializer_class = EventSerializer
