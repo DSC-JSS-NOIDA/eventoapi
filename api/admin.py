@@ -17,9 +17,23 @@ class CustomUserAdmin(UserAdmin):
         (('Permissions'), {'fields': ('is_staff', 'is_superuser',
                                       'groups', 'user_permissions')}),
     )
+    
+    add_fieldsets = (
+        (None, {'fields': ('email', 'name', 'password')}),
+        (('Personal info'), {'fields': ('role', 'phone',
+                                        'otp', 'otp_expiry', 'verified', 'status')}),
+    )
+
+
+
+class EventAdmin(admin.ModelAdmin):
+    exclude = ('creater',)
+    def save_model(self, request, obj, form, change):
+        obj.creater = request.user
+        obj.save()
 
 
 admin.site.register(User, CustomUserAdmin)
 admin.site.register(Society)
 admin.site.register(Tag)
-admin.site.register(Event)
+admin.site.register(Event, EventAdmin)

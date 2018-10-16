@@ -42,17 +42,31 @@ class SocietySerializer(serializers.ModelSerializer):
     class Meta:
         model = Society
         fields = ('name', 'created_at', 'logo', 'department_name',
-                  'phone', 'email')
+                  'phone', 'email', 'id')
+        extra_kwargs = {
+            'id': {'read_only': True},
+        }
 
 
 class TagSerializer(serializers.ModelSerializer):
     class Meta:
         model = Tag
-        fields = ('name',)
+        fields = ('name', 'id')
+        extra_kwargs = {
+            'id': {'read_only': True},
+        }
 
 
 class EventSerializer(serializers.ModelSerializer):
     class Meta:
         model = Event
         fields = ('name', 'start_day', 'end_day', 'start_time',
-                  'end_time', 'notes', 'image', 'contact_person','society', 'creater')
+                  'end_time', 'notes', 'image', 'contact_person',
+                  'society', 'id')
+        extra_kwargs = {
+            'id': {'read_only': True},
+        }
+
+    def create(self, request, obj):
+        obj.creater = request.user
+        obj.save()

@@ -12,11 +12,12 @@ from rest_framework.status import (
     HTTP_200_OK
 )
 from rest_framework.response import Response
-from rest_framework.generics import CreateAPIView
+from rest_framework.generics import CreateAPIView, ListAPIView, RetrieveAPIView
 from rest_framework.views import APIView
 
-from .models import Society
-from .serializers import UserSerializer, SocietySerializer, EventSerializer, TagSerializer
+from .models import Society, Event, Tag
+from .serializers import (UserSerializer, SocietySerializer, EventSerializer,
+                        TagSerializer)
 
 User = get_user_model()
 
@@ -79,23 +80,63 @@ class VerificationView(APIView):
             return Response({'error': 'Wrong OTP'},
                             status=HTTP_400_BAD_REQUEST)
 
-
-class CreateSocietyView(CreateAPIView):
+class EventView(RetrieveAPIView):
     permission_classes = [
         permissions.IsAuthenticated
     ]
+    queryset = Event.objects.all()
+    serializer_class = EventSerializer
+
+class SocietyView(RetrieveAPIView):
+    permission_classes = [
+        permissions.IsAuthenticated
+    ]
+    queryset = Society.objects.all()
     serializer_class = SocietySerializer
 
-
-class CreateTagView(CreateAPIView):
+class TagView(RetrieveAPIView):
     permission_classes = [
         permissions.IsAuthenticated
     ]
+    queryset = Tag.objects.all()
     serializer_class = TagSerializer
 
 
-class CreateEventView(CreateAPIView):
+
+class EventListView(ListAPIView):
     permission_classes = [
         permissions.IsAuthenticated
     ]
+    queryset = Event.objects.all()
     serializer_class = EventSerializer
+
+
+class SocietyListView(ListAPIView):
+    permission_classes = [
+        permissions.IsAuthenticated
+    ]
+    queryset = Society.objects.all()
+    serializer_class = SocietySerializer
+
+
+# class CreateSocietyView(CreateAPIView):
+#     permission_classes = [
+#         permissions.IsAuthenticated
+#     ]
+#     serializer_class = SocietySerializer
+
+
+# class CreateTagView(CreateAPIView):
+#     permission_classes = [
+#         permissions.IsAuthenticated
+#     ]
+#     serializer_class = TagSerializer
+
+
+# class CreateEventView(CreateAPIView):
+#     permission_classes = [
+#         permissions.IsAuthenticated
+#     ]
+#     serializer_class = EventSerializer
+
+

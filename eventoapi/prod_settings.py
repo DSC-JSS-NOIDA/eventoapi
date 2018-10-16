@@ -25,7 +25,7 @@ SECRET_KEY = '5@7$_+4j7l_9acobsj_=qn7!setz9nz=6fp*debu&2(rc()kpw'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = False
 
-ALLOWED_HOSTS = ["13.126.64.67", "0.0.0.0", "localhost", "127.0.0.1"]
+ALLOWED_HOSTS = ["*"]
 
 
 # Application definition
@@ -134,3 +134,4 @@ STATIC_ROOT = os.path.join(BASE_DIR, "static/")
 AUTH_USER_MODEL  = 'api.User'
 
 AUTHENTICATION_BACKENDS = ['django.contrib.auth.backends.ModelBackend', 'api.backend.PhoneAuthenticationBackend']
+
