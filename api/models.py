@@ -43,7 +43,7 @@ class User(AbstractBaseUser, PermissionsMixin):
     is_staff = models.BooleanField(default=False)
 
     USERNAME_FIELD = 'email'
-    REQUIRED_FIELDS = ['name', ]
+    REQUIRED_FIELDS = ['name', 'phone', ]
     objects = AccountManager()
 
     def get_short_name(self):
@@ -59,6 +59,7 @@ class User(AbstractBaseUser, PermissionsMixin):
 class Society(models.Model):
     name = models.CharField(max_length=100, unique=True, null=False)
     created_at = models.DateTimeField(default=timezone.now)
+    published_date = models.DateTimeField(null=True, blank=True)
     logo = models.ImageField(upload_to='', blank=True)
     department_name = models.CharField(max_length=120, null=False)
     phone = models.CharField(

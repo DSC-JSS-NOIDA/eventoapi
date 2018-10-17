@@ -130,7 +130,11 @@ STATIC_URL = '/static/'
 
 STATIC_ROOT = os.path.join(BASE_DIR, "static/")
 
+MEDIA_ROOT = "/home/mayank/eventoapi_media/"
+MEDIA_URL = "http://127.0.0.1:8000/media/"
+
+
+
 AUTH_USER_MODEL  = 'api.User'
 
 AUTHENTICATION_BACKENDS = ['django.contrib.auth.backends.ModelBackend', 'api.backend.PhoneAuthenticationBackend']
-

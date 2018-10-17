@@ -17,7 +17,7 @@ from rest_framework.views import APIView
 
 from .models import Society, Event, Tag
 from .serializers import (UserSerializer, SocietySerializer, EventSerializer,
-                        TagSerializer)
+                          TagSerializer)
 
 User = get_user_model()
 
@@ -44,10 +44,10 @@ class LoginView(APIView):
         token, _ = Token.objects.get_or_create(user=user)
 
         if not user.verified:
-            return Response({'token': token.key, 'verified': False},
+            return Response({'token': token.key, 'email': user.email, 'name': user.name, 'verified': False},
                             status=HTTP_200_OK)
 
-        return Response({'token': token.key},
+        return Response({'token': token.key, 'email': user.email, 'name': user.name, },
                         status=HTTP_200_OK)
 
 
@@ -72,13 +72,16 @@ class VerificationView(APIView):
                             status=HTTP_400_BAD_REQUEST)
         otp = request.data.get("otp")
         if otp == "111111":
+            token, _ = Token.objects.get_or_create(user=instance)
             instance.verified = True
             instance.otp = otp
             instance.save()
-            return Response(status=HTTP_200_OK)
+            return Response({'token': token.key, 'email': instance.email, 'name': instance.name, },
+                            status=HTTP_200_OK)
         else:
             return Response({'error': 'Wrong OTP'},
                             status=HTTP_400_BAD_REQUEST)
+
 
 class EventView(RetrieveAPIView):
     permission_classes = [
@@ -87,6 +90,7 @@ class EventView(RetrieveAPIView):
     queryset = Event.objects.all()
     serializer_class = EventSerializer
 
+
 class SocietyView(RetrieveAPIView):
     permission_classes = [
         permissions.IsAuthenticated
@@ -94,13 +98,13 @@ class SocietyView(RetrieveAPIView):
     queryset = Society.objects.all()
     serializer_class = SocietySerializer
 
+
 class TagView(RetrieveAPIView):
     permission_classes = [
         permissions.IsAuthenticated
     ]
     queryset = Tag.objects.all()
     serializer_class = TagSerializer
-
 
 
 class EventListView(ListAPIView):
@@ -138,5 +142,3 @@ class SocietyListView(ListAPIView):
 #         permissions.IsAuthenticated
 #     ]
 #     serializer_class = EventSerializer
-
-

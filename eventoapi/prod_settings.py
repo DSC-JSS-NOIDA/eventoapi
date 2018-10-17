@@ -131,7 +131,12 @@ STATIC_URL = '/static/'
 
 STATIC_ROOT = os.path.join(BASE_DIR, "static/")
 
+MEDIA_ROOT = "/home/ubuntu/media/"
+
+MEDIA_URL = "http://13.126.64.67/media/"
+
+
 AUTH_USER_MODEL  = 'api.User'
 
-AUTHENTICATION_BACKENDS = ['django.contrib.auth.backends.ModelBackend', 'api.backend.PhoneAuthenticationBackend']
-
+AUTHENTICATION_BACKENDS = ['django.contrib.auth.backends.ModelBackend', 
+                            'api.backend.PhoneAuthenticationBackend']
