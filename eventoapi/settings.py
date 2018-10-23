@@ -123,18 +123,23 @@ USE_L10N = True
 USE_TZ = True
 
 
-# Static files (CSS, JavaScript, Images)
-# https://docs.djangoproject.com/en/2.1/howto/static-files/
+# Static files 
 
 STATIC_URL = '/static/'
-
 STATIC_ROOT = os.path.join(BASE_DIR, "static/")
 
-MEDIA_ROOT = "/home/mayank/eventoapi_media/"
-MEDIA_URL = "http://127.0.0.1:8000/media/"
-
-
+MEDIA_ROOT = os.path.join(BASE_DIR, "media/")
+MEDIA_URL = "/media/"
 
 AUTH_USER_MODEL  = 'api.User'
 
 AUTHENTICATION_BACKENDS = ['django.contrib.auth.backends.ModelBackend', 'api.backend.PhoneAuthenticationBackend']
+
+ADMIN_SITE_HEADER = "EventO"
+ADMIN_INDEX_TITLE = "EventO Administration"
+ADMIN_SITE_TITLE = "EventO"
+
+
+# CONSTANTS
+
+CURRENT_SESSION = "18" # 18 means 18-19, Maybe make this dynamic

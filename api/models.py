@@ -1,8 +1,7 @@
 from django.db import models
-from django.contrib.auth.models import PermissionsMixin,  AbstractBaseUser, BaseUserManager
+from django.contrib.auth.models import PermissionsMixin, AbstractBaseUser, BaseUserManager
 from django.utils import timezone
 from django.core.validators import RegexValidator
-
 
 phone_regex = RegexValidator(regex=r'^\d{10}$', message="Invalid phone number.")
 
@@ -32,13 +31,13 @@ class AccountManager(BaseUserManager):
 
 class User(AbstractBaseUser, PermissionsMixin):
     name = models.CharField(max_length=40, blank=False, null=False)
-    otp = models.IntegerField(null=True, blank=True)
-    otp_expiry = models.DateTimeField(default=timezone.now, null=True, blank=True)
+    otp = models.IntegerField(null=True, blank=True) # unnecessary field?
+    otp_expiry = models.DateTimeField(default=timezone.now, null=True, blank=True) # unnecessary field?
     verified = models.BooleanField(default=False, null=False, blank=True)
     role = models.CharField(max_length=20, null=True, blank=True)
     phone = models.CharField(
         validators=[phone_regex], unique=True, null=True, max_length=10)
-    status = models.IntegerField(null=True, blank=True)
+    status = models.IntegerField(null=True, blank=True) # unnecessary field?
     email = models.EmailField(unique=True, null=False)
     is_staff = models.BooleanField(default=False)
 
@@ -74,14 +73,24 @@ class Society(models.Model):
         return self.name
 
 
-class Event(models.Model): #not working, fix foreign key field
+class Tag(models.Model):
+    name = models.CharField(max_length=100, null=False)
+
+    def __str__(self):
+        return self.name
+
+
+class Event(models.Model):
+    SESSION_CHOICES = (
+        ('18', '2018-2019'),
+        ('19', '2019-2020')
+    )
+
     name = models.CharField(max_length=80, null=False)
     start_day = models.DateTimeField(
-        u'Start day of the event', help_text='Start day of the event')
+        u'Start date and time of the event', help_text='Start date and time of the event')
     end_day = models.DateTimeField(
-        u'End day of the event', help_text='End day of the event')
-    start_time = models.TimeField('Starting time', help_text='Starting time')
-    end_time = models.TimeField('Ending time', help_text='Ending time')
+        u'End date and time of the event', help_text='End date and time of the event')
     notes = models.TextField(
         u'Textual field', help_text='Textual field', blank=True, null=True)
     image = models.ImageField(upload_to='', blank=True)
@@ -89,17 +98,12 @@ class Event(models.Model): #not working, fix foreign key field
     phone = models.CharField(
         validators=[phone_regex], null=True, blank=True, max_length=10)
     society = models.ForeignKey(
-        Society, related_name='event', on_delete=models.CASCADE)
+        Society, on_delete=models.CASCADE)
     creater = models.ForeignKey(
         User, related_name='event', on_delete=models.CASCADE)
+    tags = models.ManyToManyField(Tag, blank=True)
+    session = models.CharField(max_length=2, blank=True, null=True, choices=SESSION_CHOICES)
 
     def __str__(self):
         return self.name
 
-
-class Tag(models.Model):
-    name = models.CharField(max_length=100, null=False)
-    events = models.ManyToManyField(Event, related_name="tags", blank=True)
-
-    def __str__(self):
-        return self.name

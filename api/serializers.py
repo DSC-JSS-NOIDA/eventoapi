@@ -60,9 +60,9 @@ class TagSerializer(serializers.ModelSerializer):
 class EventSerializer(serializers.ModelSerializer):
     class Meta:
         model = Event
-        fields = ('name', 'start_day', 'end_day', 'start_time',
-                  'end_time', 'notes', 'image', 'contact_person',
-                  'society', 'id')
+        fields = ('name', 'start_day', 'end_day',
+                'notes', 'image', 'contact_person',
+                'society', 'id', 'session')
         extra_kwargs = {
             'id': {'read_only': True},
         }

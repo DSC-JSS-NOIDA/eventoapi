@@ -12,6 +12,9 @@ https://docs.djangoproject.com/en/2.1/ref/settings/
 
 import os
 
+import sentry_sdk
+from sentry_sdk.integrations.django import DjangoIntegration
+
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
@@ -123,20 +126,29 @@ USE_L10N = True
 
 USE_TZ = True
 
-
-# Static files (CSS, JavaScript, Images)
-# https://docs.djangoproject.com/en/2.1/howto/static-files/
+# Static files 
 
 STATIC_URL = '/static/'
-
 STATIC_ROOT = os.path.join(BASE_DIR, "static/")
 
-MEDIA_ROOT = "/home/ubuntu/media/"
-
+MEDIA_ROOT = "/home/ubuntu/media/" # Use os.path.join here and move the files accordingly on server
 MEDIA_URL = "http://13.126.64.67/media/"
-
 
 AUTH_USER_MODEL  = 'api.User'
 
 AUTHENTICATION_BACKENDS = ['django.contrib.auth.backends.ModelBackend', 
                             'api.backend.PhoneAuthenticationBackend']
+
+ADMIN_SITE_HEADER = "EventO Administration"
+ADMIN_INDEX_TITLE = "EventO"
+ADMIN_SITE_TITLE = "EventO"
+
+
+sentry_sdk.init(
+    dsn="https://e9b1784747754df2a8b821f505ade8be@sentry.io/1307409",
+    integrations=[DjangoIntegration()]
+)
+
+# CONSTANTS
+
+CURRENT_SESSION = "18" # 18 means 18-19, Maybe make this dynamic

@@ -1,11 +1,10 @@
 
-from django.contrib.auth import authenticate
-from django.contrib.auth import get_user_model
+from django.contrib.auth import authenticate, get_user_model
+from django.utils import timezone
+from django.conf import settings
 
 from rest_framework import permissions
 from rest_framework.authtoken.models import Token
-
-from rest_framework.permissions import AllowAny
 from rest_framework.status import (
     HTTP_400_BAD_REQUEST,
     HTTP_404_NOT_FOUND,
@@ -20,7 +19,7 @@ from .serializers import (UserSerializer, SocietySerializer, EventSerializer,
                           TagSerializer)
 
 User = get_user_model()
-
+CURRENT_SESSION = settings.CURRENT_SESSION
 
 class LoginView(APIView):
     permission_classes = [
@@ -99,12 +98,21 @@ class SocietyView(RetrieveAPIView):
     serializer_class = SocietySerializer
 
 
-class TagView(RetrieveAPIView):
+class TagEventsView(ListAPIView):
     permission_classes = [
         permissions.IsAuthenticated
     ]
-    queryset = Tag.objects.all()
-    serializer_class = TagSerializer
+    serializer_class = EventSerializer
+    ordering = ('start_day',)
+
+    def get_queryset(self):
+        current = self.kwargs['current']
+        pk = self.kwargs['pk']
+        if current :
+            queryset = Tag.objects.get(pk=pk).event_set.filter(session = CURRENT_SESSION) 
+        else :
+            queryset = Tag.objects.get(pk=pk).event_set.all()
+        return queryset
 
 
 class EventListView(ListAPIView):
@@ -113,7 +121,23 @@ class EventListView(ListAPIView):
     ]
     queryset = Event.objects.all()
     serializer_class = EventSerializer
+    ordering = ('start_day',)
 
+
+class UpcomingEventListView(ListAPIView):
+    permission_classes = [
+        permissions.IsAuthenticated
+    ]
+    serializer_class = EventSerializer
+    ordering = ('start_day',)
+
+    def get_queryset(self):
+        limit = self.kwargs['limit']
+        if limit :
+            queryset = Event.objects.filter(start_day__gt=timezone.now())[:limit]
+        else :
+            queryset = Event.objects.filter(start_day__gt=timezone.now())
+        return queryset
 
 class SocietyListView(ListAPIView):
     permission_classes = [
@@ -123,22 +147,26 @@ class SocietyListView(ListAPIView):
     serializer_class = SocietySerializer
 
 
-# class CreateSocietyView(CreateAPIView):
-#     permission_classes = [
-#         permissions.IsAuthenticated
-#     ]
-#     serializer_class = SocietySerializer
+class TagListView(ListAPIView):
+    permission_classes = [
+        permissions.IsAuthenticated
+    ]
+    queryset = Tag.objects.all()
+    serializer_class = TagSerializer
 
 
-# class CreateTagView(CreateAPIView):
-#     permission_classes = [
-#         permissions.IsAuthenticated
-#     ]
-#     serializer_class = TagSerializer
+class SocietyEventsView(ListAPIView):
+    permission_classes = [
+        permissions.IsAuthenticated
+    ]
+    serializer_class = EventSerializer
+    ordering = ('start_day',)
 
-
-# class CreateEventView(CreateAPIView):
-#     permission_classes = [
-#         permissions.IsAuthenticated
-#     ]
-#     serializer_class = EventSerializer
+    def get_queryset(self):
+        current = self.kwargs['current']
+        pk = self.kwargs['pk']
+        if current :
+            queryset = Society.objects.get(pk=pk).event_set.filter(session = CURRENT_SESSION)
+        else :
+            queryset = Society.objects.get(pk=pk).event_set.all()
+        return queryset

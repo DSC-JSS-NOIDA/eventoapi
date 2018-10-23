@@ -33,6 +33,7 @@ class EventAdmin(admin.ModelAdmin):
         obj.save()
 
 
+
 admin.site.register(User, CustomUserAdmin)
 admin.site.register(Society)
 admin.site.register(Tag)
