@@ -3,7 +3,9 @@ from django.contrib.auth.models import PermissionsMixin, AbstractBaseUser, BaseU
 from django.utils import timezone
 from django.core.validators import RegexValidator
 
-phone_regex = RegexValidator(regex=r'^\d{10}$', message="Invalid phone number.")
+phone_regex = RegexValidator(
+    regex=r'^\d{10}$', message="Invalid phone number.")
+
 
 class AccountManager(BaseUserManager):
     def create_user(self, email, name, password, phone):
@@ -29,32 +31,6 @@ class AccountManager(BaseUserManager):
         return self.get(email=email_)
 
 
-class User(AbstractBaseUser, PermissionsMixin):
-    name = models.CharField(max_length=40, blank=False, null=False)
-    otp = models.IntegerField(null=True, blank=True) # unnecessary field?
-    otp_expiry = models.DateTimeField(default=timezone.now, null=True, blank=True) # unnecessary field?
-    verified = models.BooleanField(default=False, null=False, blank=True)
-    role = models.CharField(max_length=20, null=True, blank=True)
-    phone = models.CharField(
-        validators=[phone_regex], unique=True, null=True, max_length=10)
-    status = models.IntegerField(null=True, blank=True) # unnecessary field?
-    email = models.EmailField(unique=True, null=False)
-    is_staff = models.BooleanField(default=False)
-
-    USERNAME_FIELD = 'email'
-    REQUIRED_FIELDS = ['name', 'phone', ]
-    objects = AccountManager()
-
-    def get_short_name(self):
-        return self.email
-
-    def natural_key(self):
-        return self.email
-
-    def __str__(self):
-        return self.email
-
-
 class Society(models.Model):
     name = models.CharField(max_length=100, unique=True, null=False)
     created_at = models.DateTimeField(default=timezone.now)
@@ -73,6 +49,34 @@ class Society(models.Model):
         return self.name
 
 
+class User(AbstractBaseUser, PermissionsMixin):
+    name = models.CharField(max_length=40, blank=False, null=False)
+    otp = models.IntegerField(null=True, blank=True)  # unnecessary field?
+    otp_expiry = models.DateTimeField(
+        default=timezone.now, null=True, blank=True)  # unnecessary field?
+    verified = models.BooleanField(default=False, null=False, blank=True)
+    phone = models.CharField(
+        validators=[phone_regex], unique=True, null=True, max_length=10)
+    role = models.CharField(choices=(('0', 'Regular'), ('1', 'Admin')), max_length=1, default='0')
+    email = models.EmailField(unique=True, null=False)
+    is_staff = models.BooleanField(default=False)
+    society = models.ForeignKey(
+        Society, null=True, blank=True, on_delete=models.CASCADE)
+
+    USERNAME_FIELD = 'email'
+    REQUIRED_FIELDS = ['name', 'phone', ]
+    objects = AccountManager()
+
+    def get_short_name(self):
+        return self.email
+
+    def natural_key(self):
+        return self.email
+
+    def __str__(self):
+        return self.email
+
+
 class Tag(models.Model):
     name = models.CharField(max_length=100, null=False)
 
@@ -81,7 +85,7 @@ class Tag(models.Model):
 
 
 class Event(models.Model):
-    SESSION_CHOICES = (
+    SESSION_CHOICES = ( # Make this dynamic
         ('18', '2018-2019'),
         ('19', '2019-2020')
     )
@@ -102,8 +106,8 @@ class Event(models.Model):
     creater = models.ForeignKey(
         User, related_name='event', on_delete=models.CASCADE)
     tags = models.ManyToManyField(Tag, blank=True)
-    session = models.CharField(max_length=2, blank=True, null=True, choices=SESSION_CHOICES)
+    session = models.CharField(
+        max_length=2, blank=True, null=True, choices=SESSION_CHOICES)
 
     def __str__(self):
         return self.name
-

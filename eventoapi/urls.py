@@ -23,5 +23,6 @@ admin.site.site_title = settings.ADMIN_SITE_TITLE
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('', include('api.urls')),
+    path('api/', include('api.urls')),
+    path('', include('dashboard.urls')),
 ]

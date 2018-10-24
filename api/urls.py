@@ -4,6 +4,8 @@ from .views import (LoginView, CreateUserView, VerificationView,
                     SocietyView, TagEventsView, TagListView, SocietyEventsView,
                     UpcomingEventListView)
 
+app_name = 'api'
+
 urlpatterns = [
     path('auth/login', LoginView.as_view(), name="login"),
     path('auth/register', CreateUserView.as_view(), name="register"),
