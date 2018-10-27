@@ -21,6 +21,7 @@ from .serializers import (UserSerializer, SocietySerializer, EventSerializer,
 User = get_user_model()
 CURRENT_SESSION = settings.CURRENT_SESSION
 
+
 class LoginView(APIView):
     permission_classes = [
         permissions.AllowAny
@@ -110,9 +111,10 @@ class TagEventsView(ListAPIView):
     def get_queryset(self):
         current = self.kwargs['current']
         pk = self.kwargs['pk']
-        if current :
-            queryset = Tag.objects.get(pk=pk).event_set.filter(session = CURRENT_SESSION) 
-        else :
+        if current:
+            queryset = Tag.objects.get(pk=pk).event_set.filter(
+                session=CURRENT_SESSION)
+        else:
             queryset = Tag.objects.get(pk=pk).event_set.all()
         return queryset
 
@@ -140,10 +142,12 @@ class UpcomingEventListView(ListAPIView):
     def get_queryset(self):
         limit = self.kwargs['limit']
         if limit is not None:
-            queryset = Event.objects.filter(start_day__gte=timezone.now())[:limit]
-        else :
+            queryset = Event.objects.filter(
+                start_day__gte=timezone.now())[:limit]
+        else:
             queryset = Event.objects.filter(start_day__gte=timezone.now())
         return queryset
+
 
 class PastEventListView(ListAPIView):
     permission_classes = [
@@ -155,8 +159,9 @@ class PastEventListView(ListAPIView):
     ordering = ('start_day',)
 
     def get_queryset(self):
-        queryset = Event.objects.filter(start_day__Lt=timezone.now())
+        queryset = Event.objects.filter(start_day__lte=timezone.now())
         return queryset
+
 
 class SocietyListView(ListAPIView):
     permission_classes = [
@@ -184,10 +189,15 @@ class SocietyEventsView(ListAPIView):
     ordering = ('start_day',)
 
     def get_queryset(self):
-        current = self.kwargs['current']
+        period = self.kwargs['period']
         pk = self.kwargs['pk']
-        if current :
-            queryset = Society.objects.get(pk=pk).event_set.filter(session = CURRENT_SESSION)
-        else :
+        if period == "current":
+            queryset = Society.objects.get(
+                pk=pk).event_set.filter(session=CURRENT_SESSION)
+        elif period == "past":
+            queryset = Society.objects.get(pk=pk).event_set.all().filter(
+                start_day__lte=timezone.now())
+        else:
             queryset = Society.objects.get(pk=pk).event_set.all()
+
         return queryset
