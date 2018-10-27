@@ -63,7 +63,7 @@ class EventSerializer(serializers.ModelSerializer):
     class Meta:
         model = Event
         fields = ('name', 'start_day', 'end_day',
-                  'notes', 'image', 'contact_person', 'contact_phone',
+                  'notes', 'image', 'contact_person', 'contact_number',
                   'society', 'society_name', 'id', 'session')
         extra_kwargs = {
             'id': {'read_only': True},
