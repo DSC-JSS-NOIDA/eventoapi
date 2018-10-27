@@ -160,3 +160,7 @@ CURRENT_SESSION = "18" # 18 means 18-19, Maybe make this dynamic
 CRISPY_TEMPLATE_PACK = 'bootstrap4'
 
 LOGIN_REDIRECT_URL = "/"
+
+LOGIN_URL = "accounts/login"
+
+REGION = "us-east-1"

@@ -3,7 +3,7 @@ from django.contrib.auth.models import PermissionsMixin, AbstractBaseUser, BaseU
 from django.utils import timezone
 from django.core.validators import RegexValidator
 
-phone_regex = RegexValidator(
+PHONE_REGEX = RegexValidator(
     regex=r'^\d{10}$', message="Invalid phone number.")
 
 
@@ -38,7 +38,7 @@ class Society(models.Model):
     logo = models.ImageField(upload_to='', blank=True)
     department_name = models.CharField(max_length=40, null=False)
     phone = models.CharField(
-        validators=[phone_regex], null=True, blank=True, max_length=10)
+        validators=[PHONE_REGEX], null=True, blank=True, max_length=10)
     email = models.EmailField(null=True, blank=True)
     type = models.CharField(max_length=30, blank=True, null=True)
 
@@ -59,7 +59,7 @@ class User(AbstractBaseUser, PermissionsMixin):
         default=timezone.now, null=True, blank=True)  # unnecessary field?
     verified = models.BooleanField(default=False, null=False, blank=True)
     phone = models.CharField(
-        validators=[phone_regex], unique=True, null=True, max_length=10)
+        validators=[PHONE_REGEX], unique=True, null=True, max_length=10)
     role = models.CharField(choices=USER_CHOICES, max_length=1, default='0')
     email = models.EmailField(unique=True, null=False)
     is_staff = models.BooleanField(default=False)
@@ -103,7 +103,7 @@ class Event(models.Model):
     image = models.ImageField(upload_to='', blank=True)
     contact_person = models.CharField(null=True, blank=True, max_length=30)
     contact_number = models.CharField(
-        validators=[phone_regex], null=True, blank=True, max_length=10)
+        validators=[PHONE_REGEX], null=True, blank=True, max_length=10)
     registration_link = models.URLField(null=True, blank=True)
     venue = models.CharField(max_length=50, null=True, blank=True)
     society = models.ForeignKey(

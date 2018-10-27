@@ -3,12 +3,13 @@ from django.core import exceptions
 from django.contrib.auth import password_validation
 from rest_framework import serializers
 from .models import Society, Event, Tag
-User = get_user_model()
+from .sns import send_otp
 
+USER = get_user_model()
 
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
-        model = User
+        model = USER
         fields = (
             'email',
             'phone',
@@ -27,14 +28,16 @@ class UserSerializer(serializers.ModelSerializer):
         return value
 
     def create(self, validated_data):
-        user = User.objects.create(
+        user = USER.objects.create(
             name=validated_data['name'],
             email=validated_data['email'],
             phone=validated_data['phone']
         )
         user.set_password(validated_data['password'])
+        otp = USER.objects.make_random_password(length=6, allowed_chars='0123456789')
+        user.otp = otp
         user.save()
-
+        send_otp(user)
         return user
 
 

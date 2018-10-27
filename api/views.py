@@ -8,15 +8,18 @@ from rest_framework.authtoken.models import Token
 from rest_framework.status import (
     HTTP_400_BAD_REQUEST,
     HTTP_404_NOT_FOUND,
-    HTTP_200_OK
+    HTTP_200_OK,
+    HTTP_503_SERVICE_UNAVAILABLE
 )
 from rest_framework.response import Response
 from rest_framework.generics import CreateAPIView, ListAPIView, RetrieveAPIView
 from rest_framework.views import APIView
 
+from .sns import send_otp
 from .models import Society, Event, Tag
 from .serializers import (UserSerializer, SocietySerializer, EventSerializer,
                           TagSerializer)
+
 
 User = get_user_model()
 CURRENT_SESSION = settings.CURRENT_SESSION
@@ -36,6 +39,7 @@ class LoginView(APIView):
         if username is None or password is None:
             return Response({'error': 'Please provide both email/phone and password'},
                             status=HTTP_400_BAD_REQUEST)
+
         user = authenticate(username=username, password=password)
         if not user:
             return Response({'error': 'Invalid Credentials'},
@@ -44,8 +48,8 @@ class LoginView(APIView):
         token, _ = Token.objects.get_or_create(user=user)
 
         if not user.verified:
-            return Response({'token': token.key, 'email': user.email, 'name': user.name, 'verified': False},
-                            status=HTTP_200_OK)
+            return Response({'token': token.key, 'email': user.email, 'name': user.name,
+                            'verified': False}, status=HTTP_200_OK)
 
         return Response({'token': token.key, 'email': user.email, 'name': user.name, },
                         status=HTTP_200_OK)
@@ -61,26 +65,34 @@ class CreateUserView(CreateAPIView):
 
 class VerificationView(APIView):
     permission_classes = [
-        permissions.AllowAny
+        permissions.IsAuthenticated
+    ]
+
+    def post(self, request):
+        user = request.user
+        otp = request.data.get("otp")
+
+        if otp == str(user.otp):
+            token, _ = Token.objects.get_or_create(user=user)
+            user.verified = True
+            user.save()
+            return Response({'token': token.key, 'email': user.email, 'name': user.name, },
+                            status=HTTP_200_OK)
+        return Response({'error': 'Wrong OTP'},
+                        status=HTTP_400_BAD_REQUEST)
+
+
+class ResendOTPView(APIView):
+    permission_classes = [
+        permissions.IsAuthenticated
     ]
 
     def post(self, request):
         try:
-            instance = User.objects.get(email=request.data.get("email"))
-        except:
-            return Response({'error': 'Invalid credentials'},
-                            status=HTTP_400_BAD_REQUEST)
-        otp = request.data.get("otp")
-        if otp == "111111":
-            token, _ = Token.objects.get_or_create(user=instance)
-            instance.verified = True
-            instance.otp = otp
-            instance.save()
-            return Response({'token': token.key, 'email': instance.email, 'name': instance.name, },
-                            status=HTTP_200_OK)
-        else:
-            return Response({'error': 'Wrong OTP'},
-                            status=HTTP_400_BAD_REQUEST)
+            send_otp(request.user)
+        except Exception:
+            return Response({}, status=HTTP_503_SERVICE_UNAVAILABLE)
+        return Response({}, status=HTTP_200_OK)
 
 
 class EventView(RetrieveAPIView):
@@ -197,6 +209,9 @@ class SocietyEventsView(ListAPIView):
         elif period == "past":
             queryset = Society.objects.get(pk=pk).event_set.all().filter(
                 start_day__lte=timezone.now())
+        elif period == "upcoming":
+            queryset = Society.objects.get(pk=pk).event_set.all().filter(
+                start_day__gte=timezone.now())
         else:
             queryset = Society.objects.get(pk=pk).event_set.all()
 
