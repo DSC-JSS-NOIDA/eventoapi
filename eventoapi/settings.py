@@ -37,6 +37,8 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'django.contrib.humanize',
+    'crispy_forms',
     'rest_framework',
     'rest_framework.authtoken',
     'api',
@@ -46,8 +48,7 @@ INSTALLED_APPS = [
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': (
         'rest_framework.authentication.TokenAuthentication',
-    ),
-    'DATETIME_FORMAT': "%Y-%m-%dT%I:%M:%S"
+    )
 }
 
 MIDDLEWARE = [
@@ -78,6 +79,9 @@ TEMPLATES = [
     },
 ]
 
+STATICFILES_DIRS = [
+    os.path.join(BASE_DIR, "dashboard/static"),
+]
 WSGI_APPLICATION = 'eventoapi.wsgi.application'
 
 
@@ -128,7 +132,7 @@ USE_TZ = True
 # Static files 
 
 STATIC_URL = '/static/'
-STATIC_ROOT = os.path.join(BASE_DIR, "static/")
+STATIC_ROOT = os.path.join(BASE_DIR, "static")
 
 MEDIA_ROOT = os.path.join(BASE_DIR, "media/")
 MEDIA_URL = "/media/"
@@ -145,3 +149,7 @@ ADMIN_SITE_TITLE = "EventO"
 # CONSTANTS
 
 CURRENT_SESSION = "18" # 18 means 18-19, Maybe make this dynamic
+
+CRISPY_TEMPLATE_PACK = 'bootstrap4'
+
+LOGIN_REDIRECT_URL = "/"

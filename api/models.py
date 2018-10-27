@@ -104,6 +104,8 @@ class Event(models.Model):
     contact_person = models.CharField(null=True, blank=True, max_length=30)
     contact_number = models.CharField(
         validators=[phone_regex], null=True, blank=True, max_length=10)
+    registration_link = models.URLField(null=True, blank=True)
+    venue = models.CharField(max_length=50, null=True, blank=True)
     society = models.ForeignKey(
         Society, on_delete=models.CASCADE)
     creater = models.ForeignKey(

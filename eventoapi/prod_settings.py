@@ -40,6 +40,8 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'django.contrib.humanize',
+    'crispy_forms',
     'rest_framework',
     'rest_framework.authtoken',
     'api',
@@ -49,8 +51,7 @@ INSTALLED_APPS = [
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': (
         'rest_framework.authentication.TokenAuthentication',
-    ),
-    'DATETIME_FORMAT': "%Y-%m-%dT%I:%M:%S"
+    )
 }
 
 MIDDLEWARE = [
@@ -154,3 +155,8 @@ sentry_sdk.init(
 # CONSTANTS
 
 CURRENT_SESSION = "18" # 18 means 18-19, Maybe make this dynamic
+
+
+CRISPY_TEMPLATE_PACK = 'bootstrap4'
+
+LOGIN_REDIRECT_URL = "/"

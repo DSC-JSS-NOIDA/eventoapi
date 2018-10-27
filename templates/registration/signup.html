@@ -1,0 +1,19 @@
+{% extends "base.html" %}
+{% load crispy_forms_tags %}
+
+{% block content %}
+
+<div class="card login-box mx-auto mt-3 p-3">
+
+    <form method="post" action="{% url 'dashboard:signup' %}">
+
+        {% csrf_token %} 
+        {{ form|crispy }}
+
+        <input class="btn btn-primary" type="submit" value="Sign Up">
+        <a class="btn btn-outline-secondary" href="{% url 'dashboard:login' %}">Login</a>
+    </form>
+
+</div>
+
+{% endblock %}

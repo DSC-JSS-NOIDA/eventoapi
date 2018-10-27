@@ -9,6 +9,7 @@ djangorestframework = "*"
 pillow = "*"
 gunicorn = "*"
 sentry-sdk = "*"
+django-crispy-forms = "*"
 
 [dev-packages]
 

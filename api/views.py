@@ -3,7 +3,7 @@ from django.contrib.auth import authenticate, get_user_model
 from django.utils import timezone
 from django.conf import settings
 
-from rest_framework import permissions
+from rest_framework import permissions, filters
 from rest_framework.authtoken.models import Token
 from rest_framework.status import (
     HTTP_400_BAD_REQUEST,
@@ -103,6 +103,8 @@ class TagEventsView(ListAPIView):
         permissions.IsAuthenticated
     ]
     serializer_class = EventSerializer
+    filter_backends = (filters.OrderingFilter,)
+    ordering_fields = ('name', 'start_day')
     ordering = ('start_day',)
 
     def get_queryset(self):
@@ -121,6 +123,8 @@ class EventListView(ListAPIView):
     ]
     queryset = Event.objects.all()
     serializer_class = EventSerializer
+    filter_backends = (filters.OrderingFilter,)
+    ordering_fields = ('name', 'start_day')
     ordering = ('start_day',)
 
 
@@ -129,14 +133,29 @@ class UpcomingEventListView(ListAPIView):
         permissions.IsAuthenticated
     ]
     serializer_class = EventSerializer
-    ordering = ('start_day',)
+    filter_backends = (filters.OrderingFilter,)
+    ordering_fields = ('name', 'start_day')
+    ordering = ('-start_day',)
 
     def get_queryset(self):
         limit = self.kwargs['limit']
-        if limit :
-            queryset = Event.objects.filter(start_day__gt=timezone.now())[:limit]
+        if limit is not None:
+            queryset = Event.objects.filter(start_day__gte=timezone.now())[:limit]
         else :
-            queryset = Event.objects.filter(start_day__gt=timezone.now())
+            queryset = Event.objects.filter(start_day__gte=timezone.now())
+        return queryset
+
+class PastEventListView(ListAPIView):
+    permission_classes = [
+        permissions.IsAuthenticated
+    ]
+    serializer_class = EventSerializer
+    filter_backends = (filters.OrderingFilter,)
+    ordering_fields = ('name', 'start_day')
+    ordering = ('start_day',)
+
+    def get_queryset(self):
+        queryset = Event.objects.filter(start_day__Lt=timezone.now())
         return queryset
 
 class SocietyListView(ListAPIView):
@@ -160,6 +179,8 @@ class SocietyEventsView(ListAPIView):
         permissions.IsAuthenticated
     ]
     serializer_class = EventSerializer
+    filter_backends = (filters.OrderingFilter,)
+    ordering_fields = ('name', 'start_day')
     ordering = ('start_day',)
 
     def get_queryset(self):

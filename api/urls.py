@@ -2,7 +2,7 @@ from django.urls import path
 from .views import (LoginView, CreateUserView, VerificationView,
                     EventListView, SocietyListView, EventView,
                     SocietyView, TagEventsView, TagListView, SocietyEventsView,
-                    UpcomingEventListView)
+                    UpcomingEventListView, PastEventListView)
 
 app_name = 'api'
 
@@ -16,8 +16,9 @@ urlpatterns = [
     path('tag/<int:pk>/events/current', TagEventsView.as_view(), {"current" : True}, name="tag_events_current"),
     path('society/<int:pk>/events', SocietyEventsView.as_view(), {"current" : False}, name="society_events"),
     path('society/<int:pk>/events/current', SocietyEventsView.as_view(), {"current" : True}, name="society_events_current"),
-    path('events/upcoming', UpcomingEventListView.as_view(), {"limit" : False}, name="events_upcoming"),
-    path('events/upcoming/10', UpcomingEventListView.as_view(), {"limit" : True}, name="events_upcoming_10", ),
+    path('events/past', PastEventListView.as_view(), name="events_past"),
+    path('events/upcoming', UpcomingEventListView.as_view(), {"limit" : None}, name="events_upcoming"),
+    path('events/upcoming/<int:limit>', UpcomingEventListView.as_view(), name="events_upcoming_limit"),
     path('events', EventListView.as_view(), name="events"),
     path('societys', SocietyListView.as_view(), name="societies"),
     path('tags', TagListView.as_view(), name="tags"),
