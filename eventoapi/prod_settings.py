@@ -49,7 +49,8 @@ INSTALLED_APPS = [
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': (
         'rest_framework.authentication.TokenAuthentication',
-    )
+    ),
+    'DATETIME_FORMAT': "%Y-%m-%dT%I:%M:%S"
 }
 
 MIDDLEWARE = [

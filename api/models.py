@@ -36,10 +36,11 @@ class Society(models.Model):
     created_at = models.DateTimeField(default=timezone.now)
     published_date = models.DateTimeField(null=True, blank=True)
     logo = models.ImageField(upload_to='', blank=True)
-    department_name = models.CharField(max_length=120, null=False)
+    department_name = models.CharField(max_length=40, null=False)
     phone = models.CharField(
         validators=[phone_regex], null=True, blank=True, max_length=10)
     email = models.EmailField(null=True, blank=True)
+    type = models.CharField(max_length=30, blank=True, null=True)
 
     def publish(self):
         self.published_date = timezone.now
@@ -50,6 +51,8 @@ class Society(models.Model):
 
 
 class User(AbstractBaseUser, PermissionsMixin):
+    USER_CHOICES = (('0', 'Regular'), ('1', 'Admin'))
+
     name = models.CharField(max_length=40, blank=False, null=False)
     otp = models.IntegerField(null=True, blank=True)  # unnecessary field?
     otp_expiry = models.DateTimeField(
@@ -57,7 +60,7 @@ class User(AbstractBaseUser, PermissionsMixin):
     verified = models.BooleanField(default=False, null=False, blank=True)
     phone = models.CharField(
         validators=[phone_regex], unique=True, null=True, max_length=10)
-    role = models.CharField(choices=(('0', 'Regular'), ('1', 'Admin')), max_length=1, default='0')
+    role = models.CharField(choices=USER_CHOICES, max_length=1, default='0')
     email = models.EmailField(unique=True, null=False)
     is_staff = models.BooleanField(default=False)
     society = models.ForeignKey(
@@ -85,21 +88,21 @@ class Tag(models.Model):
 
 
 class Event(models.Model):
-    SESSION_CHOICES = ( # Make this dynamic
+    SESSION_CHOICES = (  # Make this dynamic
         ('18', '2018-2019'),
         ('19', '2019-2020')
     )
 
     name = models.CharField(max_length=80, null=False)
     start_day = models.DateTimeField(
-        u'Start date and time of the event', help_text='Start date and time of the event')
+        u'Start date and time', help_text='Format: HH:MM:SS')
     end_day = models.DateTimeField(
-        u'End date and time of the event', help_text='End date and time of the event')
+        u'End date and time')
     notes = models.TextField(
-        u'Textual field', help_text='Textual field', blank=True, null=True)
+        u'Description', blank=True, null=True)
     image = models.ImageField(upload_to='', blank=True)
     contact_person = models.CharField(null=True, blank=True, max_length=30)
-    phone = models.CharField(
+    contact_number = models.CharField(
         validators=[phone_regex], null=True, blank=True, max_length=10)
     society = models.ForeignKey(
         Society, on_delete=models.CASCADE)

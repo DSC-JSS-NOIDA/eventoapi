@@ -42,7 +42,7 @@ class SocietySerializer(serializers.ModelSerializer):
     class Meta:
         model = Society
         fields = ('name', 'created_at', 'logo', 'department_name',
-                  'phone', 'email', 'id')
+                  'phone', 'email', 'id', 'type')
         extra_kwargs = {
             'id': {'read_only': True},
         }
@@ -58,11 +58,13 @@ class TagSerializer(serializers.ModelSerializer):
 
 
 class EventSerializer(serializers.ModelSerializer):
+    society_name = serializers.CharField(source='society.name')
+
     class Meta:
         model = Event
         fields = ('name', 'start_day', 'end_day',
-                'notes', 'image', 'contact_person',
-                'society', 'id', 'session')
+                  'notes', 'image', 'contact_person', 'contact_phone',
+                  'society', 'society_name', 'id', 'session')
         extra_kwargs = {
             'id': {'read_only': True},
         }
