@@ -14,6 +14,7 @@ from rest_framework.status import (
 from rest_framework.response import Response
 from rest_framework.generics import CreateAPIView, ListAPIView, RetrieveAPIView
 from rest_framework.views import APIView
+from rest_framework.throttling import AnonRateThrottle
 
 from .sns import send_otp
 from .models import Society, Event, Tag
@@ -65,12 +66,26 @@ class CreateUserView(CreateAPIView):
 
 class VerificationView(APIView):
     permission_classes = [
-        permissions.IsAuthenticated
+        permissions.AllowAny
     ]
 
     def post(self, request):
-        user = request.user
+        email = request.data.get("email")
         otp = request.data.get("otp")
+
+        if email is None or otp is None:
+            return Response({'error': 'Request must include email and OTP.'},
+                            status=HTTP_400_BAD_REQUEST)
+
+        try:
+            user = User.objects.get(email=email)            
+        except User.DoesNotExist:
+            return Response({'error': 'No user with the given email exists.'},
+                            status=HTTP_404_NOT_FOUND)
+
+        if user.verified:
+            return Response({'error': 'User already verified.'},
+                        status=HTTP_400_BAD_REQUEST)
 
         if otp == str(user.otp):
             token, _ = Token.objects.get_or_create(user=user)
@@ -78,17 +93,31 @@ class VerificationView(APIView):
             user.save()
             return Response({'token': token.key, 'email': user.email, 'name': user.name, },
                             status=HTTP_200_OK)
+
         return Response({'error': 'Wrong OTP'},
                         status=HTTP_400_BAD_REQUEST)
 
 
-class ResendOTPView(APIView):
+class ResendOTPView(APIView, AnonRateThrottle):
     permission_classes = [
-        permissions.IsAuthenticated
+        permissions.AllowAny
     ]
 
+    rate = '10/hour' # CHANGE THIS TO A LOWER VALUE
+
     def post(self, request):
-        send_otp(request.user)
+        email = request.data.get("email")
+
+        if email is None:
+            return Response({'error': 'Request must include email.'},
+                            status=HTTP_400_BAD_REQUEST)
+        try:
+            user = User.objects.get(email=email)            
+        except User.DoesNotExist:
+            return Response({'error': 'No user with the given email exists.'},
+                            status=HTTP_404_NOT_FOUND)
+
+        send_otp(user)
         return Response({}, status=HTTP_200_OK)
 
 
