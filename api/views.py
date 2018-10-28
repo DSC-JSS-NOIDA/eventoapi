@@ -88,10 +88,7 @@ class ResendOTPView(APIView):
     ]
 
     def post(self, request):
-        try:
-            send_otp(request.user)
-        except Exception:
-            return Response({}, status=HTTP_503_SERVICE_UNAVAILABLE)
+        send_otp(request.user)
         return Response({}, status=HTTP_200_OK)
 
 

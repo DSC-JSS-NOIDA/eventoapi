@@ -1,29 +1,11 @@
 from django.views.generic import ListView, CreateView, UpdateView
+from django.views.generic.edit import FormView
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
-from django.contrib.auth import get_user_model
 from django.contrib.auth.views import redirect_to_login
-from django.contrib.auth.forms import UserCreationForm
 from django.utils import timezone
-from django import forms
 
 from api.models import Event, Society
-
-User = get_user_model()
-
-EVENT_FIELDS = ['name', 'start_day', 'end_day',
-                'notes', 'image', 'contact_person', 'contact_number',
-                'society', 'session', 'venue', 'registration_link']
-
-
-class SignUpForm(UserCreationForm):
-    society = forms.ModelChoiceField(
-        queryset=Society.objects.all(), required=True)
-
-    class Meta:
-        model = User
-        fields = ('email', 'name', 'phone', 'society',
-                  'password1', 'password2', )
-
+from .forms import SignUpForm, EventForm, NotificationForm
 
 class SocietyAdminAccessMixin(UserPassesTestMixin):
     login_url = '/accounts/login/'
@@ -41,7 +23,7 @@ class HomeView(LoginRequiredMixin, SocietyAdminAccessMixin, ListView):
 
     def get_queryset(self):
         society = self.request.user.society
-        return Event.objects.filter(society=society)
+        return Event.objects.filter(society=society).order_by('-start_day')
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -52,17 +34,20 @@ class HomeView(LoginRequiredMixin, SocietyAdminAccessMixin, ListView):
 class CreateEventView(LoginRequiredMixin, SocietyAdminAccessMixin, CreateView):
     model = Event
     template_name = "dashboard/create_event.html"
-    fields = EVENT_FIELDS
+    form_class = EventForm
+    success_url = "/"
 
     def form_valid(self, form):
         form.instance.creater = self.request.user
+        form.instance.society = self.request.user.society
         return super().form_valid(form)
 
 
 class UpdateEventView(LoginRequiredMixin, SocietyAdminAccessMixin, UpdateView):
     model = Event
     template_name = "dashboard/update_event.html"
-    fields = EVENT_FIELDS
+    form_class = EventForm
+    success_url = "/"
 
 
 class CreateUserView(CreateView):
@@ -72,4 +57,15 @@ class CreateUserView(CreateView):
 
     def form_valid(self, form):
         form.instance.role = '1'
+        return super().form_valid(form)
+
+class SendNotificationView(FormView):
+    template_name = "dashboard/notification.html"
+    form_class = NotificationForm
+    success_url = "/"
+
+    def form_valid(self, form):
+        # This method is called when valid form data has been POSTed.
+        # It should return an HttpResponse.
+        # form.send_email()
         return super().form_valid(form)

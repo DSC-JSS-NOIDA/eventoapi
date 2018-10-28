@@ -65,6 +65,7 @@ class User(AbstractBaseUser, PermissionsMixin):
     is_staff = models.BooleanField(default=False)
     society = models.ForeignKey(
         Society, null=True, blank=True, on_delete=models.CASCADE)
+    fcm_token = models.CharField(null=True, blank=True, max_length=200)
 
     USERNAME_FIELD = 'email'
     REQUIRED_FIELDS = ['name', 'phone', ]
@@ -95,7 +96,7 @@ class Event(models.Model):
 
     name = models.CharField(max_length=80, null=False)
     start_day = models.DateTimeField(
-        u'Start date and time', help_text='Format: HH:MM:SS')
+        u'Start date and time', help_text='Time Format: HH:MM:SS')
     end_day = models.DateTimeField(
         u'End date and time')
     notes = models.TextField(

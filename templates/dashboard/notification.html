@@ -2,12 +2,13 @@
 {% load crispy_forms_tags %}
 
 {% block content %}
+
 <div class="card form-box mx-auto mt-4 mb-5 p-4">
-    <h3 class="mb-4">Edit Event</h3>
+    <h3 class="mb-4">Send Notification</h3>
     <form method="post">
         {% csrf_token %}
         {{ form|crispy }}
-        <input class="btn btn-primary" type="submit" value="Save">
+        <input class="btn btn-primary" type="submit" value="Send">
     </form>
 </div>
 {% endblock %}

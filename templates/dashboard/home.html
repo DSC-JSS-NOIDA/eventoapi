@@ -4,20 +4,21 @@
 {% block content %}
 
 
-<nav aria-label="breadcrumb" class="mt-3">
-    <ol class="breadcrumb">
-        <li class="" aria-current="page"><h4>{{ user.society }} - Events</h4></li>
-        <li class=" ml-auto" aria-current="page">
+<header class="d-sm-flex flex-row justify-content-between mt-4 p-3 rounded text-center ">
+        <h4 class="m-0 pt-1 text-sm-left">{{ user.society }} - Events</h4>
+        <div class="mt-3 mt-sm-0">
+            {% if user.is_superuser %}
+                <a class="btn btn-primary m-1" role="button" href="{% url 'dashboard:notification' %}">Send Notification</a>
+            {% endif %}
+            <a class="btn btn-primary m-1" role="button" href="{% url 'dashboard:create_event' %}">Create Event</a>
+        </div>
 
-            <a class="btn btn-light" role="button" href="{% url 'dashboard:create_event' %}">Create Event</a>
-        </li>
-    </ol>
-</nav>
+</header>
 
-<div class="p-2 mt-3">
+<main class="mt-4">
     {% for event in object_list %}
-    <div class="bg-light p-2 my-1">
-        <a href="{% url 'dashboard:update_event' event.id %}">{{ event.name }}</a> -
+    <div class="bg-light p-3 my-2">
+        <a class="font-weight-bold" href="{% url 'dashboard:update_event' event.id %}">{{ event.name }}</a> -
         {% if event.start_day > today %}
         <span class="text-muted">Starts {{ event.start_day|naturaltime }}.</span>
         {% else %}
@@ -25,5 +26,5 @@
         {% endif %}
     </div>
     {% endfor %}
-</div>
+</main>
 {% endblock %}

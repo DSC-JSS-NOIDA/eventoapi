@@ -129,7 +129,7 @@ USE_L10N = True
 USE_TZ = True
 
 
-# Static files 
+# Static files
 
 STATIC_URL = '/static/'
 STATIC_ROOT = os.path.join(BASE_DIR, "static")
@@ -137,18 +137,19 @@ STATIC_ROOT = os.path.join(BASE_DIR, "static")
 MEDIA_ROOT = os.path.join(BASE_DIR, "media/")
 MEDIA_URL = "/media/"
 
-AUTH_USER_MODEL  = 'api.User'
+AUTH_USER_MODEL = 'api.User'
 
-AUTHENTICATION_BACKENDS = ['django.contrib.auth.backends.ModelBackend', 'api.backend.PhoneAuthenticationBackend']
+AUTHENTICATION_BACKENDS = [
+    'django.contrib.auth.backends.ModelBackend', 'api.backend.PhoneAuthenticationBackend']
 
-ADMIN_SITE_HEADER = "EventO"
-ADMIN_INDEX_TITLE = "EventO Administration"
-ADMIN_SITE_TITLE = "EventO"
+ADMIN_SITE_HEADER = "EVENTO"
+ADMIN_INDEX_TITLE = "EVENTO Administration"
+ADMIN_SITE_TITLE = "EVENTO"
 
 
 # CONSTANTS
 
-CURRENT_SESSION = "18" # 18 means 18-19, Maybe make this dynamic
+CURRENT_SESSION = "18"  # 18 means 18-19, Maybe make this dynamic
 
 CRISPY_TEMPLATE_PACK = 'bootstrap4'
 
@@ -157,3 +158,4 @@ LOGIN_REDIRECT_URL = "/"
 LOGIN_URL = "accounts/login"
 
 REGION = "us-east-1"
+

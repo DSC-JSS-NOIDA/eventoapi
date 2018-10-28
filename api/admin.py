@@ -21,7 +21,7 @@ class CustomUserAdmin(UserAdmin):
     add_fieldsets = (
         (None, {'fields': ('email', 'name', 'password')}),
         (('Personal info'), {'fields': ('role', 'phone',
-                                        'otp', 'otp_expiry', 'verified', 'status')}),
+                                        'otp', 'otp_expiry', 'verified')}),
     )
 
 
