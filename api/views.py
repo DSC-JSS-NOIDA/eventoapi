@@ -175,15 +175,15 @@ class UpcomingEventListView(ListAPIView):
     serializer_class = EventSerializer
     filter_backends = (filters.OrderingFilter,)
     ordering_fields = ('name', 'start_day')
-    ordering = ('-start_day',)
+    ordering = ('start_day',)
 
     def get_queryset(self):
         limit = self.kwargs['limit']
         if limit is not None:
             queryset = Event.objects.filter(
-                start_day__gte=timezone.now())[:limit]
+                end_day__gte=timezone.now())[:limit]
         else:
-            queryset = Event.objects.filter(start_day__gte=timezone.now())
+            queryset = Event.objects.filter(end_day__gte=timezone.now())
         return queryset
 
 
@@ -193,11 +193,11 @@ class PastEventListView(ListAPIView):
     ]
     serializer_class = EventSerializer
     filter_backends = (filters.OrderingFilter,)
-    ordering_fields = ('name', 'start_day')
-    ordering = ('start_day',)
+    ordering_fields = ('name', 'end_day')
+    ordering = ('-end_day',)
 
     def get_queryset(self):
-        queryset = Event.objects.filter(start_day__lte=timezone.now())
+        queryset = Event.objects.filter(end_day__lte=timezone.now())
         return queryset
 
 
@@ -232,13 +232,28 @@ class SocietyEventsView(ListAPIView):
         if period == "current":
             queryset = Society.objects.get(
                 pk=pk).event_set.filter(session=CURRENT_SESSION)
-        elif period == "past":
-            queryset = Society.objects.get(pk=pk).event_set.all().filter(
-                start_day__lte=timezone.now())
         elif period == "upcoming":
             queryset = Society.objects.get(pk=pk).event_set.all().filter(
-                start_day__gte=timezone.now())
+                end_day__gte=timezone.now())
         else:
             queryset = Society.objects.get(pk=pk).event_set.all()
+
+        return queryset
+
+
+
+class SocietyPastEventsView(ListAPIView):
+    permission_classes = [
+        permissions.IsAuthenticated
+    ]
+    serializer_class = EventSerializer
+    filter_backends = (filters.OrderingFilter,)
+    ordering_fields = ('name', 'end_day')
+    ordering = ('-end_day',)
+
+    def get_queryset(self):
+        pk = self.kwargs['pk']
+        queryset = Society.objects.get(pk=pk).event_set.all().filter(
+                end_day__lte=timezone.now())
 
         return queryset
