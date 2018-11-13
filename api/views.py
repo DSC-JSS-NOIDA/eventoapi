@@ -48,6 +48,11 @@ class LoginView(APIView):
 
         token, _ = Token.objects.get_or_create(user=user)
 
+        fcm_token = request.data.get("fcm_token")        
+        if fcm_token is not None:
+            user.fcm_token = fcm_token
+            user.save()
+
         if not user.verified:
             return Response({'token': token.key, 'email': user.email, 'name': user.name,
                             'verified': False}, status=HTTP_200_OK)

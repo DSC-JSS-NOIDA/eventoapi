@@ -1,6 +1,6 @@
 
 *.sqlite3
-
+*.json
 
 # Byte-compiled / optimized / DLL files
 __pycache__/

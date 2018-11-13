@@ -14,7 +14,8 @@ class UserSerializer(serializers.ModelSerializer):
             'email',
             'phone',
             'password',
-            'name'
+            'name',
+            'fcm_token'
         )
         extra_kwargs = {
             'password': {'write_only': True},
@@ -31,7 +32,8 @@ class UserSerializer(serializers.ModelSerializer):
         user = USER.objects.create(
             name=validated_data['name'],
             email=validated_data['email'],
-            phone=validated_data['phone']
+            phone=validated_data['phone'],
+            fcm_token=validated_data['fcm_token']
         )
         user.set_password(validated_data['password'])
         otp = USER.objects.make_random_password(length=6, allowed_chars='0123456789')

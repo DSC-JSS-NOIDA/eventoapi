@@ -146,6 +146,7 @@ ADMIN_SITE_HEADER = "EventO Administration"
 ADMIN_INDEX_TITLE = "EventO"
 ADMIN_SITE_TITLE = "EventO"
 
+FIREBASE_CRED_PATH = "/home/ubuntu/cred/firebase.json"
 
 sentry_sdk.init(
     dsn="https://e9b1784747754df2a8b821f505ade8be@sentry.io/1307409",
@@ -155,7 +156,6 @@ sentry_sdk.init(
 # CONSTANTS
 
 CURRENT_SESSION = "18" # 18 means 18-19, Maybe make this dynamic
-
 
 CRISPY_TEMPLATE_PACK = 'bootstrap4'
 

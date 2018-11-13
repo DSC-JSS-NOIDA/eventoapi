@@ -1,5 +1,5 @@
 from django.urls import path, include
-from .views import HomeView, UpdateEventView, CreateUserView, CreateEventView, SendNotificationView
+from .views import HomeView, UpdateEventView, CreateUserView, CreateEventView, SendNotificationView, NotificationSuccessView
 
 app_name = 'dashboard'
 
@@ -8,6 +8,8 @@ urlpatterns = [
     path('event/create', CreateEventView.as_view(), name="create_event"),
     path('event/update/<int:pk>', UpdateEventView.as_view(), name="update_event"),
     path('notification', SendNotificationView.as_view(), name="notification"),
+    path('notification/success', NotificationSuccessView.as_view(),
+         name="success_notification"),
     path('accounts/', include('django.contrib.auth.urls')),
     path('accounts/signup', CreateUserView.as_view(), name="signup"),
 ]

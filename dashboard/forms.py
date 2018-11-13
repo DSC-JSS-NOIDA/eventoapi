@@ -4,7 +4,7 @@ from django.contrib.auth.forms import UserCreationForm
 from django.utils import timezone
 from django import forms
 from api.models import Event, Society
-
+from .firebase import send_notification_to_user
 User = get_user_model()
 
 
@@ -49,4 +49,9 @@ class EventForm(forms.ModelForm):
         }
 
 class NotificationForm(forms.Form):
+    recipient = forms.CharField(label='Send to', max_length=100)
     message = forms.CharField(widget=forms.Textarea, label='Message', max_length=100)
+
+    def send_notification(self):
+        user = User.objects.get(email=self.cleaned_data["recipient"])
+        send_notification_to_user(user.fcm_token, self.cleaned_data["message"])

@@ -1,4 +1,6 @@
+
 from django.views.generic import ListView, CreateView, UpdateView
+from django.views.generic.base import TemplateView
 from django.views.generic.edit import FormView
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from django.contrib.auth.views import redirect_to_login
@@ -6,6 +8,7 @@ from django.utils import timezone
 
 from api.models import Event, Society
 from .forms import SignUpForm, EventForm, NotificationForm
+
 
 class SocietyAdminAccessMixin(UserPassesTestMixin):
     login_url = '/accounts/login/'
@@ -59,13 +62,20 @@ class CreateUserView(CreateView):
         form.instance.role = '1'
         return super().form_valid(form)
 
-class SendNotificationView(FormView):
+
+class SendNotificationView(LoginRequiredMixin, SocietyAdminAccessMixin, FormView):
     template_name = "dashboard/notification.html"
     form_class = NotificationForm
-    success_url = "/"
+    success_url = "/notification/success"
 
     def form_valid(self, form):
-        # This method is called when valid form data has been POSTed.
-        # It should return an HttpResponse.
-        # form.send_email()
+        # form.send_notification()
         return super().form_valid(form)
+
+
+class NotificationSuccessView(TemplateView):
+    template_name = "dashboard/not_success.html"
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        return context

@@ -11,6 +11,7 @@ gunicorn = "*"
 sentry-sdk = "*"
 django-crispy-forms = "*"
 "boto3" = "*"
+firebase-admin = "*"
 
 [dev-packages]
 

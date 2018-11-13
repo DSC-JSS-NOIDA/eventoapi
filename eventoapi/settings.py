@@ -146,6 +146,8 @@ ADMIN_SITE_HEADER = "EVENTO"
 ADMIN_INDEX_TITLE = "EVENTO Administration"
 ADMIN_SITE_TITLE = "EVENTO"
 
+FIREBASE_CRED_PATH = os.path.join(BASE_DIR, "evento-tronku-firebase-adminsdk-ksvcc-ebe5225441.json")
+
 
 # CONSTANTS
 
