@@ -1,10 +1,14 @@
 from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin
-from .models import User, Society, Tag, Event
+from .models import Society, Tag, Event
+from .forms import UserCreationForm
+from django.contrib.auth import get_user_model
+User = get_user_model()
 
 
 class CustomUserAdmin(UserAdmin):
     model = User
+    add_form = UserCreationForm
 
     list_display = ('name', 'email', 'verified')
     list_filter = ('verified',)
@@ -19,11 +23,9 @@ class CustomUserAdmin(UserAdmin):
     )
     
     add_fieldsets = (
-        (None, {'fields': ('email', 'name', 'password')}),
-        (('Personal info'), {'fields': ('role', 'phone',
-                                        'otp', 'otp_expiry', 'verified')}),
+        (None, {'fields': ('email', 'name', 'password1', 'password2', 'role', 'society')}),
+       
     )
-
 
 
 class EventAdmin(admin.ModelAdmin):

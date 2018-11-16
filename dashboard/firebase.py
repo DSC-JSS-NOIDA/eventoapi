@@ -1,11 +1,36 @@
 from django.conf import settings
+from django.contrib.auth import get_user_model
 import datetime
-
 import firebase_admin
 from firebase_admin import credentials, messaging
 
+User = get_user_model()
+
 cred = credentials.Certificate(settings.FIREBASE_CRED_PATH)
 firebase_admin.initialize_app(cred)
+
+
+def send_notification_to_all(message):
+
+    registration_tokens = User.objects.all().values_list('fcm_token', flat=True) 
+    topic = 'events'
+    messaging.subscribe_to_topic(registration_tokens, topic)
+
+    message = messaging.Message(
+        android=messaging.AndroidConfig(
+            ttl=datetime.timedelta(seconds=3600),
+            priority='normal',
+            notification=messaging.AndroidNotification(
+                title=message["title"],
+                body=message["message"],
+            ),
+        ),
+        topic=topic,
+    )
+
+    messaging.send(message)
+    messaging.unsubscribe_from_topic(registration_tokens, topic)
+
 
 def send_notification_to_user(registration_token, message):
 
@@ -14,12 +39,12 @@ def send_notification_to_user(registration_token, message):
             ttl=datetime.timedelta(seconds=3600),
             priority='normal',
             notification=messaging.AndroidNotification(
-                title=message.title,
-                body=message.body,
+                title=message["title"],
+                body=message["message"],
             ),
         ),
         token=registration_token,
     )
 
-    response = messaging.send(message)
-    print('Successfully sent message:', response)
+    messaging.send(message)
+    # print('Successfully sent message:', response)

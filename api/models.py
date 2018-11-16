@@ -12,6 +12,7 @@ class AccountManager(BaseUserManager):
         user = self.model(email=self.normalize_email(email),
                           name=name, password=password, phone=phone)
         user.set_password(password)
+        user.is_active = True
         user.is_staff = False
         user.is_superuser = False
         user.save(using=self._db)
@@ -54,10 +55,10 @@ class User(AbstractBaseUser, PermissionsMixin):
     USER_CHOICES = (('0', 'Regular'), ('1', 'Admin'))
 
     name = models.CharField(max_length=40, blank=False, null=False)
-    otp = models.IntegerField(null=True, blank=True)  # unnecessary field?
+    otp = models.IntegerField(null=True, blank=True) 
     otp_expiry = models.DateTimeField(
         default=timezone.now, null=True, blank=True)  # unnecessary field?
-    verified = models.BooleanField(default=False, null=False, blank=True)
+    verified = models.BooleanField(default=False, null=True, blank=True)
     phone = models.CharField(
         validators=[PHONE_REGEX], unique=True, null=True, max_length=10)
     role = models.CharField(choices=USER_CHOICES, max_length=1, default='0')
