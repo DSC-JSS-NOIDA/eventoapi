@@ -2,7 +2,7 @@ from django.conf import settings
 import boto3
 
 
-def send_otp(user):
+def send_otp(phone, otp):
     ''' Sends a one time password to the user's phone number'''
 
     client = boto3.client(
@@ -11,9 +11,9 @@ def send_otp(user):
     )
 
     response = client.publish(
-        PhoneNumber="+91" + user.phone,
+        PhoneNumber="+91" + phone,
         Message="Your OTP for registration at Evento is " +
-        str(user.otp) + ".",
+        str(otp) + ".",
         MessageStructure='string',
         MessageAttributes={
             'string': {

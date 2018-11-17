@@ -2,19 +2,20 @@
 from django.contrib.auth import authenticate, get_user_model
 from django.utils import timezone
 from django.conf import settings
+from django.contrib.auth.password_validation import validate_password
 
 from rest_framework import permissions, filters
 from rest_framework.authtoken.models import Token
+from rest_framework.response import Response
+from rest_framework.generics import CreateAPIView, ListAPIView, RetrieveAPIView
+from rest_framework.views import APIView
+from rest_framework.throttling import AnonRateThrottle
 from rest_framework.status import (
     HTTP_400_BAD_REQUEST,
     HTTP_404_NOT_FOUND,
     HTTP_200_OK,
     HTTP_503_SERVICE_UNAVAILABLE
 )
-from rest_framework.response import Response
-from rest_framework.generics import CreateAPIView, ListAPIView, RetrieveAPIView
-from rest_framework.views import APIView
-from rest_framework.throttling import AnonRateThrottle
 
 from .sns import send_otp
 from .models import Society, Event, Tag
@@ -108,7 +109,7 @@ class ResendOTPView(APIView, AnonRateThrottle):
         permissions.AllowAny
     ]
 
-    rate = '10/hour' # CHANGE THIS TO A LOWER VALUE
+    rate = '3/hour'
 
     def post(self, request):
         email = request.data.get("email")
@@ -122,8 +123,45 @@ class ResendOTPView(APIView, AnonRateThrottle):
             return Response({'error': 'No user with the given email exists.'},
                             status=HTTP_404_NOT_FOUND)
 
-        send_otp(user)
+        send_otp(user.phone, user.otp)
         return Response({}, status=HTTP_200_OK)
+
+
+class ForgotView(APIView):
+    permission_classes = [
+        permissions.AllowAny
+    ]
+
+    def post(self, request):
+        email = request.data.get("email")
+        otp = request.data.get("otp")
+        password = request.data.get("password")
+
+        if email is None or otp is None or password is None:
+            return Response({'error': 'Request must include email, OTP and password.'},
+                            status=HTTP_400_BAD_REQUEST)
+        try:
+            user = User.objects.get(email=email)            
+        except User.DoesNotExist:
+            return Response({'error': 'No user with the given email exists.'},
+                            status=HTTP_404_NOT_FOUND)
+
+        if otp != str(user.otp):
+            return Response({'error': 'Wrong OTP'},
+                            status=HTTP_400_BAD_REQUEST)
+        try :
+            validate_password(password)
+        except:
+            return Response({'error': 'Invalid password.'},
+                            status=HTTP_200_OK)         
+
+        user.set_password(password)
+        user.save()
+        return Response({'email': user.email},
+                            status=HTTP_200_OK)
+
+
+
 
 
 class EventView(RetrieveAPIView):

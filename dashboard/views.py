@@ -69,7 +69,7 @@ class SendNotificationView(LoginRequiredMixin, SocietyAdminAccessMixin, FormView
     success_url = "/notification/success"
 
     def form_valid(self, form):
-        # form.send_notification()
+        form.send_notification()
         return super().form_valid(form)
 
 

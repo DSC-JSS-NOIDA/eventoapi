@@ -3,7 +3,7 @@ from .views import (LoginView, CreateUserView, VerificationView,
                     EventListView, SocietyListView, EventView,
                     SocietyView, TagEventsView, TagListView, SocietyEventsView,
                     SocietyPastEventsView, UpcomingEventListView, PastEventListView,
-                    ResendOTPView)
+                    ResendOTPView, ForgotView)
 
 app_name = 'api'
 
@@ -15,6 +15,8 @@ urlpatterns = [
     path('auth/verify', VerificationView.as_view(), name="verify"),
 
     path('auth/resend', ResendOTPView.as_view(), name="resend"),
+
+    path('auth/forgot', ForgotView.as_view(), name="reset"),
 
     path('event/<int:pk>', EventView.as_view(), name="event"),
 
