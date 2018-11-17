@@ -39,7 +39,7 @@ class UserSerializer(serializers.ModelSerializer):
         otp = USER.objects.make_random_password(length=6, allowed_chars='0123456789')
         user.otp = otp
         user.save()
-        send_otp(user)
+        send_otp(user.phone, user.otp)
         return user
 
 

@@ -9,13 +9,11 @@ User = get_user_model()
 cred = credentials.Certificate(settings.FIREBASE_CRED_PATH)
 firebase_admin.initialize_app(cred)
 
-
 def send_notification_to_all(message):
 
-    registration_tokens = User.objects.all().values_list('fcm_token', flat=True) 
+    registration_tokens = list(User.objects.exclude(fcm_token__isnull=True).exclude(fcm_token__exact='').values_list('fcm_token', flat=True))
     topic = 'events'
     messaging.subscribe_to_topic(registration_tokens, topic)
-
     message = messaging.Message(
         android=messaging.AndroidConfig(
             ttl=datetime.timedelta(seconds=3600),
@@ -28,7 +26,8 @@ def send_notification_to_all(message):
         topic=topic,
     )
 
-    messaging.send(message)
+    response = messaging.send(message)
+    print(response)
     messaging.unsubscribe_from_topic(registration_tokens, topic)
 
 
@@ -47,4 +46,3 @@ def send_notification_to_user(registration_token, message):
     )
 
     messaging.send(message)
-    # print('Successfully sent message:', response)

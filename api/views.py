@@ -123,7 +123,12 @@ class ResendOTPView(APIView, AnonRateThrottle):
             return Response({'error': 'No user with the given email exists.'},
                             status=HTTP_404_NOT_FOUND)
 
-        send_otp(user.phone, user.otp)
+        reset = request.data.get("reset")
+        if  reset is not None and reset == "true":
+            send_otp(user.phone, user.otp, True)
+        else:            
+            send_otp(user.phone, user.otp)
+        
         return Response({}, status=HTTP_200_OK)
 
 
@@ -161,9 +166,6 @@ class ForgotView(APIView):
                             status=HTTP_200_OK)
 
 
-
-
-
 class EventView(RetrieveAPIView):
     permission_classes = [
         permissions.IsAuthenticated
@@ -178,6 +180,9 @@ class SocietyView(RetrieveAPIView):
     ]
     queryset = Society.objects.all()
     serializer_class = SocietySerializer
+    filter_backends = (filters.OrderingFilter,)
+    ordering_fields = ('name',)
+    ordering = ('name',)
 
 
 class TagEventsView(ListAPIView):

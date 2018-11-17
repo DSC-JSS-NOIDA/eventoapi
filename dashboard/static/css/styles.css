@@ -9,7 +9,6 @@ body {
     margin: .5rem;
 }
 
-
 a {
     color: var(--primary-color)
 }
@@ -22,6 +21,10 @@ a:hover {
     box-shadow: inset 0 -5px white;
     font-weight: 600;
     letter-spacing: 2px;
+}
+
+.navbar-collapse {
+    margin-top: 1rem;
 }
 
 .nav-link {
@@ -66,8 +69,10 @@ a:hover {
 header {
     background-color: #e9ecef;
 }
-.dateinput, .timeinput {
-    width:50%;
+
+.dateinput,
+.timeinput {
+    width: 50%;
     display: inline-block;
 }
 
