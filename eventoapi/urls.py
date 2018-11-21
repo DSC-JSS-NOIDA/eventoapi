@@ -24,5 +24,6 @@ admin.site.site_title = settings.ADMIN_SITE_TITLE
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('api/', include('api.urls')),
+    path('accounts/', include('django.contrib.auth.urls')),
     path('', include('dashboard.urls')),
 ]

@@ -3,6 +3,7 @@ from django.contrib.auth import authenticate, get_user_model
 from django.utils import timezone
 from django.conf import settings
 from django.contrib.auth.password_validation import validate_password
+from django.utils.crypto import get_random_string
 
 from rest_framework import permissions, filters
 from rest_framework.authtoken.models import Token
@@ -49,14 +50,14 @@ class LoginView(APIView):
 
         token, _ = Token.objects.get_or_create(user=user)
 
-        fcm_token = request.data.get("fcm_token")        
+        fcm_token = request.data.get("fcm_token")
         if fcm_token is not None:
             user.fcm_token = fcm_token
             user.save()
 
         if not user.verified:
             return Response({'token': token.key, 'email': user.email, 'name': user.name,
-                            'verified': False}, status=HTTP_200_OK)
+                             'verified': False}, status=HTTP_200_OK)
 
         return Response({'token': token.key, 'email': user.email, 'name': user.name, },
                         status=HTTP_200_OK)
@@ -84,14 +85,14 @@ class VerificationView(APIView):
                             status=HTTP_400_BAD_REQUEST)
 
         try:
-            user = User.objects.get(email=email)            
+            user = User.objects.get(email=email)
         except User.DoesNotExist:
             return Response({'error': 'No user with the given email exists.'},
                             status=HTTP_404_NOT_FOUND)
 
         if user.verified:
             return Response({'error': 'User already verified.'},
-                        status=HTTP_400_BAD_REQUEST)
+                            status=HTTP_400_BAD_REQUEST)
 
         if otp == str(user.otp):
             token, _ = Token.objects.get_or_create(user=user)
@@ -118,17 +119,19 @@ class ResendOTPView(APIView, AnonRateThrottle):
             return Response({'error': 'Request must include email.'},
                             status=HTTP_400_BAD_REQUEST)
         try:
-            user = User.objects.get(email=email)            
+            user = User.objects.get(email=email)
         except User.DoesNotExist:
             return Response({'error': 'No user with the given email exists.'},
                             status=HTTP_404_NOT_FOUND)
-
+        otp = get_random_string(length=6, allowed_chars='0123456789')
+        user.otp = otp
         reset = request.data.get("reset")
-        if  reset is not None and reset == "true":
-            send_otp(user.phone, user.otp, True)
-        else:            
-            send_otp(user.phone, user.otp)
         
+        if reset is not None and reset == "true":
+            send_otp(user.phone, user.otp, True)
+        else:
+            send_otp(user.phone, user.otp)
+
         return Response({}, status=HTTP_200_OK)
 
 
@@ -146,7 +149,7 @@ class ForgotView(APIView):
             return Response({'error': 'Request must include email, OTP and password.'},
                             status=HTTP_400_BAD_REQUEST)
         try:
-            user = User.objects.get(email=email)            
+            user = User.objects.get(email=email)
         except User.DoesNotExist:
             return Response({'error': 'No user with the given email exists.'},
                             status=HTTP_404_NOT_FOUND)
@@ -154,16 +157,16 @@ class ForgotView(APIView):
         if otp != str(user.otp):
             return Response({'error': 'Wrong OTP'},
                             status=HTTP_400_BAD_REQUEST)
-        try :
+        try:
             validate_password(password)
         except:
             return Response({'error': 'Invalid password.'},
-                            status=HTTP_200_OK)         
+                            status=HTTP_200_OK)
 
         user.set_password(password)
         user.save()
         return Response({'email': user.email},
-                            status=HTTP_200_OK)
+                        status=HTTP_200_OK)
 
 
 class EventView(RetrieveAPIView):
@@ -255,6 +258,8 @@ class SocietyListView(ListAPIView):
     ]
     queryset = Society.objects.all()
     serializer_class = SocietySerializer
+    ordering_fields = ('name',)
+    ordering = ('name',)
 
 
 class TagListView(ListAPIView):
@@ -289,7 +294,6 @@ class SocietyEventsView(ListAPIView):
         return queryset
 
 
-
 class SocietyPastEventsView(ListAPIView):
     permission_classes = [
         permissions.IsAuthenticated
@@ -302,6 +306,6 @@ class SocietyPastEventsView(ListAPIView):
     def get_queryset(self):
         pk = self.kwargs['pk']
         queryset = Society.objects.get(pk=pk).event_set.all().filter(
-                end_day__lte=timezone.now())
+            end_day__lte=timezone.now())
 
         return queryset

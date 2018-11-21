@@ -10,6 +10,5 @@ urlpatterns = [
     path('notification', SendNotificationView.as_view(), name="notification"),
     path('notification/success', NotificationSuccessView.as_view(),
          name="success_notification"),
-    path('accounts/', include('django.contrib.auth.urls')),
     path('accounts/signup', CreateUserView.as_view(), name="signup"),
 ]

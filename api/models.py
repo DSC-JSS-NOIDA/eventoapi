@@ -2,6 +2,7 @@ from django.db import models
 from django.contrib.auth.models import PermissionsMixin, AbstractBaseUser, BaseUserManager
 from django.utils import timezone
 from django.core.validators import RegexValidator
+from django.utils.crypto import get_random_string
 
 PHONE_REGEX = RegexValidator(
     regex=r'^\d{10}$', message="Invalid phone number.")
@@ -55,7 +56,7 @@ class User(AbstractBaseUser, PermissionsMixin):
     USER_CHOICES = (('0', 'Regular'), ('1', 'Admin'))
 
     name = models.CharField(max_length=40, blank=False, null=False)
-    otp = models.IntegerField(null=True, blank=True) 
+    otp = models.IntegerField(null=True, blank=True, default=get_random_string(length=6, allowed_chars='0123456789')) 
     otp_expiry = models.DateTimeField(
         default=timezone.now, null=True, blank=True)  # unnecessary field?
     verified = models.BooleanField(default=False, null=True, blank=True)
@@ -64,6 +65,7 @@ class User(AbstractBaseUser, PermissionsMixin):
     role = models.CharField(choices=USER_CHOICES, max_length=1, default='0')
     email = models.EmailField(unique=True, null=False)
     is_staff = models.BooleanField(default=False)
+    is_active = models.BooleanField(default=True)
     society = models.ForeignKey(
         Society, null=True, blank=True, on_delete=models.CASCADE)
     fcm_token = models.CharField(null=True, blank=True, max_length=200)

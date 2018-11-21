@@ -124,7 +124,10 @@
                             {{ user.name }}
                         </a>
                         <div class="dropdown-menu" aria-labelledby="navbarDropdown" style="display:none">
-                            <a class="dropdown-item" href="{% url 'dashboard:logout' %}">
+                            <a class="dropdown-item" href="{% url 'password_change' %}">
+                                Change password
+                            </a>
+                            <a class="dropdown-item" href="{% url 'logout' %}">
                                 Logout
                             </a>
                         </div>
@@ -133,7 +136,7 @@
 
                     <form class="form-inline">
                         <a class="btn mx-2 btn-primary" href="{% url 'dashboard:signup' %}">Sign up</a>
-                        <a class="btn mx-2 btn-outline-light" href="{% url 'dashboard:login' %}">Log in</a>
+                        <a class="btn mx-2 btn-outline-light" href="{% url 'login' %}">Log in</a>
                     </form>
 
                     {% endif %}

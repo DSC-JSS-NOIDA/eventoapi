@@ -36,8 +36,6 @@ class UserSerializer(serializers.ModelSerializer):
             fcm_token=validated_data['fcm_token']
         )
         user.set_password(validated_data['password'])
-        otp = USER.objects.make_random_password(length=6, allowed_chars='0123456789')
-        user.otp = otp
         user.save()
         send_otp(user.phone, user.otp)
         return user
