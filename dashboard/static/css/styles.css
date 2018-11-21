@@ -22,9 +22,9 @@ a:hover {
     font-weight: 600;
     letter-spacing: 2px;
 }
-
-.navbar-collapse {
-    margin-top: 1rem;
+.dropdown-menu {
+    right: 0;
+    left:unset;
 }
 
 .nav-link {

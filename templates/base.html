@@ -12,95 +12,95 @@
     <link href="https://fonts.googleapis.com/css?family=Nunito+Sans" rel="stylesheet">
     <!-- <link rel="stylesheet" href="{% static 'css/styles.css' %}"> -->
     <style>
-        :root {
-            --primary-color: #7E55E4;
-            --secondary-color: #A357EB;
-            --shadow-color: #E0DAED
-        }
+   :root {
+    --primary-color: #7E55E4;
+    --secondary-color: #A357EB;
+    --shadow-color: #E0DAED
+}
 
-        body {
-            font-family: 'Nunito Sans', sans-serif;
-            margin: .5rem;
-        }
+body {
+    font-family: 'Nunito Sans', sans-serif;
+    margin: .5rem;
+}
 
-        a {
-            color: var(--primary-color)
-        }
+a {
+    color: var(--primary-color)
+}
 
-        a:hover {
-            color: var(--secondary-color)
-        }
+a:hover {
+    color: var(--secondary-color)
+}
 
-        .navbar-brand {
-            box-shadow: inset 0 -5px white;
-            font-weight: 600;
-            letter-spacing: 2px;
-        }
+.navbar-brand {
+    box-shadow: inset 0 -5px white;
+    font-weight: 600;
+    letter-spacing: 2px;
+}
+.dropdown-menu {
+    right: 0;
+    left:unset;
+}
 
-        .navbar-collapse {
-            margin-top: 1rem;
-        }
+.nav-link {
+    color: #fff !important
+}
 
-        .nav-link {
-            color: #fff !important
-        }
+.card {
+    box-shadow: 1px 1px 20px 0px #dcdcdc;
+    border: 0;
+    border-radius: 8px;
+}
 
-        .card {
-            box-shadow: 1px 1px 20px 0px #dcdcdc;
-            border: 0;
-            border-radius: 8px;
-        }
+.btn-primary {
+    background: var(--primary-color);
+    border-color: var(--primary-color)
+}
 
-        .btn-primary {
-            background: var(--primary-color);
-            border-color: var(--primary-color)
-        }
+.btn-primary:hover {
+    background-color: var(--secondary-color);
+    border-color: var(--secondary-color)
+}
 
-        .btn-primary:hover {
-            background-color: var(--secondary-color);
-            border-color: var(--secondary-color)
-        }
+.btn-primary:active {
+    background-color: var(--secondary-color) !important;
+    border-color: var(--secondary-color) !important
+}
 
-        .btn-primary:active {
-            background-color: var(--secondary-color) !important;
-            border-color: var(--secondary-color) !important
-        }
+.btn-primary:focus,
+.form-control:focus {
+    border-color: var(--secondary-color);
+    box-shadow: 0 0 0 0.2rem var(--shadow-color) !important;
+}
 
-        .btn-primary:focus,
-        .form-control:focus {
-            border-color: var(--secondary-color);
-            box-shadow: 0 0 0 0.2rem var(--shadow-color) !important;
-        }
+.form-control {
+    border-color: var(--shadow-color)
+}
 
-        .form-control {
-            border-color: var(--shadow-color)
-        }
+.dropdown-item:active {
+    background-color: var(--primary-color);
+}
 
-        .dropdown-item:active {
-            background-color: var(--primary-color);
-        }
+header {
+    background-color: #e9ecef;
+}
 
-        header {
-            background-color: #e9ecef;
-        }
+.dateinput,
+.timeinput {
+    width: 50%;
+    display: inline-block;
+}
 
-        .dateinput,
-        .timeinput {
-            width: 50%;
-            display: inline-block;
-        }
+.login-box {
+    max-width: 300px;
+}
 
-        .login-box {
-            max-width: 300px;
-        }
+.signup-box {
+    max-width: 450px;
+}
 
-        .signup-box {
-            max-width: 450px;
-        }
-
-        .form-box {
-            max-width: 500px;
-        }        
+.form-box {
+    max-width: 500px;
+}
     </style>
 
 <body>

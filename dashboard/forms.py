@@ -26,15 +26,13 @@ class SignUpForm(UserCreationForm):
 class EventForm(forms.ModelForm):
     start_day = forms.SplitDateTimeField(
         widget=forms.SplitDateTimeWidget(
-            date_attrs={'type': 'date', 'class': 'form-control',
-                        'min': timezone.now().date},
+            date_attrs={'type': 'date', 'class': 'form-control'},
             time_attrs={'type': 'time', 'class': 'form-control'}
         )
     )
     end_day = forms.SplitDateTimeField(
         widget=forms.SplitDateTimeWidget(
-            date_attrs={'type': 'date', 'class': 'form-control',
-                        'min': timezone.now().date},
+            date_attrs={'type': 'date', 'class': 'form-control'},
             time_attrs={'type': 'time', 'class': 'form-control'}
         )
     )
