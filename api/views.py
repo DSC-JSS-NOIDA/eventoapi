@@ -125,6 +125,7 @@ class ResendOTPView(APIView, AnonRateThrottle):
                             status=HTTP_404_NOT_FOUND)
         otp = get_random_string(length=6, allowed_chars='0123456789')
         user.otp = otp
+        user.save()
         reset = request.data.get("reset")
         
         if reset is not None and reset == "true":
@@ -132,7 +133,7 @@ class ResendOTPView(APIView, AnonRateThrottle):
         else:
             send_otp(user.phone, user.otp)
 
-        return Response({}, status=HTTP_200_OK)
+        return Response({'data' : "OTP sent"}, status=HTTP_200_OK)
 
 
 class ForgotView(APIView):
