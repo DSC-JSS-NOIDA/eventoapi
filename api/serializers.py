@@ -7,6 +7,7 @@ from .sns import send_otp
 
 USER = get_user_model()
 
+
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = USER
@@ -62,13 +63,14 @@ class TagSerializer(serializers.ModelSerializer):
 
 class EventSerializer(serializers.ModelSerializer):
     society_name = serializers.CharField(source='society.name')
+    society_type = serializers.CharField(source='society.type')
     society_logo = serializers.ImageField(source='society.logo')
 
     class Meta:
         model = Event
         fields = ('name', 'start_day', 'end_day', 'venue', 'registration_link',
                   'notes', 'image', 'contact_person', 'contact_number',
-                  'society', 'society_name', 'society_logo', 'id', 'session')
+                  'society', 'society_name',  'society_type', 'society_logo', 'id', 'session')
         extra_kwargs = {
             'id': {'read_only': True},
         }
